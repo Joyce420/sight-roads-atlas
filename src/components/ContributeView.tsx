@@ -103,7 +103,7 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
       description: description.trim() || `${title}的全套信息差自建自办方案。`,
       coreGap: coreGap.trim() || "许多人因信息闭塞常支付过高代理服务费。事实上，通过官方公布流程自主申请，公开、安全、且大部分不设额外手续费用。",
       appliedTo: appliedTo.trim() || "寻求自主探索学识和求学求职的普通高校学子、创作者及有再学习需求的普通市民。",
-      costEstimation: costEstimation.trim() || "官方自办完全免费，仅需自负路费与简单工本复核款",
+      costEstimation: costEstimation.trim() || "官方自办通常免费，仅需自负路费与简单工本复核款",
       timeline: timeline.trim() || "自主填备并提交（1-5分钟） + 官方复核（3-10个工作日）",
       practicalSteps: filteredSteps,
       relatedLinks: linkTitle1.trim() && linkUrl1.trim() ? [{ title: linkTitle1.trim(), url: linkUrl1.trim() }] : [{ title: "地方一网通办及官方保障服务入口", url: "https://www.gov.cn" }],
