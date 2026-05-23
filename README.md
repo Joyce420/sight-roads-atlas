@@ -1,20 +1,13 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# 看见更多路｜世界信息差图谱 (sight-roads-atlas)
 
-# Run and deploy your AI Studio app
+一个面向普通人的信息差发现平台，帮助用户看见更多机会、权益、资源、工具、项目、政策和生活方式。
 
-This contains everything you need to run your app locally.
+### ⚙️ 项目说明
 
-View your app in AI Studio: https://ai.studio/apps/47bf6e20-92ee-4d73-8a0a-220a4d22d8b2
+当前项目为纯前端演示版，不需要任何外部 API Key，亦不依赖任何后端数据库服务。所有模拟仿真匹配、地图标记和本地贡献数据均使用浏览器的 `localStorage` 进行本地安全持久化。
 
-## Run Locally
+### 🚀 发挥作用
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- **看见更多路**：探索精选的十二大成长和权益福利领域。
+- **纯前端驱动**：完全使用本地存储 (Local Storage) 实现信息差收藏、我的地图定制、自主投稿草稿。
+- **免 Key 体验**：内置模拟问答辅助和个性化匹配测验。

@@ -42,8 +42,11 @@
 
 /* Base style resets to enforce light background and prevent large black blocks */
 html, body, #root {
-  background-color: #f8f9fa !all-important;
+  background-color: #f8f9fa !important;
   color: #191b22;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Custom scrollbars and transition effects */

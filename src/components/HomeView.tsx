@@ -28,11 +28,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
   };
 
   const hotTags = [
-    { label: "免学费去德国", query: "德国" },
-    { label: "数字游民签证", query: "数字游民" },
-    { label: "低至0%税率", query: "税" },
-    { label: "免费送日本老宅", query: "日本" },
-    { label: "省10万自办跳板", query: "绿卡" },
+    { label: "免费文献查阅", query: "知网" },
+    { label: "青年免费驿站", query: "驿站" },
+    { label: "AI提效大模型", query: "AI" },
+    { label: "日本空村老宅", query: "日本" },
+    { label: "二级双通道报销", query: "双通道" },
   ];
 
   // Pick top 3 featured gaps
@@ -45,15 +45,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
         <div className="text-center max-w-4xl mx-auto px-4 space-y-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/8 text-primary border border-primary/20 text-xs font-semibold animate-bounce">
             <span className="material-symbols-outlined text-[14px]">insights</span>
-            <span>打破世界信息茧房 · 汇聚全球套利路径</span>
+            <span>打破世界信息差 · 汇聚成长探索路径</span>
           </div>
           
           <h1 className="text-3.5xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-tight">
-            看见更多路，<span className="text-primary bg-gradient-to-r from-primary to-primary-container bg-clip-text text-transparent">人生不止一条轨道</span>
+            我们不替你选择人生，<span className="text-primary bg-gradient-to-r from-primary to-primary-container bg-clip-text text-transparent">我们只是帮你看见更多路。</span>
           </h1>
           
           <p className="text-base md:text-lg text-text-muted max-w-2xl mx-auto">
-            汇集全球1%精算玩家正规运作的低预算留学、数字游民避税、超低成本置业、快捷第三国绿卡自办指南。抹平信息盲区，重新掌握人生主动权。
+            我们整理普通人可能不知道的权益、资源、工具、项目、优惠、政策和生活方式，把它们变成看得懂的信息卡片。
           </p>
 
           {/* Search Box */}
@@ -64,7 +64,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="尝试搜搜：“德国” “免税” “数字游民”..."
+                placeholder="搜索公共资源与生活提效：“数字证书” “青年驿站” “测试API”..."
                 className="w-full text-base bg-transparent text-gray-900 focus:outline-hidden py-2"
               />
               <button
@@ -96,58 +96,58 @@ export const HomeView: React.FC<HomeViewProps> = ({
       {/* Analytics Insight Widgets */}
       <section className="max-w-7xl mx-auto px-4">
         <h2 className="text-sm font-bold text-gray-400 tracking-widest uppercase mb-4 text-center md:text-left">
-          📊 全球图谱关键指标面板
+          📊 核心智囊数据分析面板
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-100/60 hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-muted text-sm font-medium">出境定居成本最低</span>
+              <span className="text-text-muted text-sm font-medium">公共教育与文献查阅</span>
               <div className="h-8 w-8 rounded-lg bg-green-50 text-green-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">trending_down</span>
               </div>
             </div>
-            <div className="text-2xl font-bold text-gray-900">德国“双元制”</div>
+            <div className="text-2xl font-bold text-gray-900">免押数字借阅证</div>
             <div className="text-xs text-green-600 font-semibold mt-1 flex items-center gap-0.5">
-              <span>免学费 + 每月发千欧补贴</span>
+              <span>全国数字图书馆合规免费查阅</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-100/60 hover:shadow-md transition-all">
+          <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-150 hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-muted text-sm font-medium">离岸降税效率最强</span>
+              <span className="text-text-muted text-sm font-medium">智慧 AI 生产力提效</span>
               <div className="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <span className="material-symbols-outlined text-[20px]">credit_card</span>
+                <span className="material-symbols-outlined text-[20px]">precision_manufacturing</span>
               </div>
             </div>
-            <div className="text-2xl font-bold text-gray-900">格鲁吉亚独资</div>
+            <div className="text-2xl font-bold text-gray-900">官方 API 密钥</div>
             <div className="text-xs text-indigo-600 font-semibold mt-1 flex items-center gap-0.5">
-              <span>年入4.5万美元以内 0% 所得税</span>
+              <span>善用自带免费额度，实现安全降本</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-100/60 hover:shadow-md transition-all">
+          <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-150 hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-muted text-sm font-medium">直办移民最高性价比</span>
+              <span className="text-text-muted text-sm font-medium">青年求职落脚保障</span>
               <div className="h-8 w-8 rounded-lg bg-yellow-50 text-yellow-600 flex items-center justify-center">
-                <span className="material-symbols-outlined text-[20px]">shield</span>
+                <span className="material-symbols-outlined text-[20px]">home</span>
               </div>
             </div>
-            <div className="text-2xl font-bold text-gray-900">自办第三国绿卡</div>
+            <div className="text-2xl font-bold text-gray-900">地方青年之家</div>
             <div className="text-xs text-yellow-600 font-semibold mt-1 flex items-center gap-0.5">
-              <span>减免近十万高昂中介黑色款项</span>
+              <span>可申 7-15 天免费短期过渡借宿</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-100/60 hover:shadow-md transition-all">
+          <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-150 hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-muted text-sm font-medium">已汇集套利路径</span>
+              <span className="text-text-muted text-sm font-medium">精选探索成长路径</span>
               <div className="h-8 w-8 rounded-lg bg-primary/5 text-primary flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">hub</span>
               </div>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{gaps.length + 42} 条记录</div>
+            <div className="text-2xl font-bold text-gray-900">{gaps.length + 32} 条实践数</div>
             <div className="text-xs text-primary font-semibold mt-1 flex items-center gap-0.5">
-              <span>本周新增 3 条 · 每天极速勘析上报</span>
+              <span>大门类 100% 免费公开，随时自主查阅</span>
             </div>
           </div>
         </div>
@@ -157,23 +157,23 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <section className="bg-white py-12 border-y border-gray-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-8 space-y-2">
-            <h2 className="text-2.5xl font-bold text-gray-900">六大信息差极客版图</h2>
-            <p className="text-text-muted text-sm">选择适合你人生底牌的突破角度，进入细分图谱深入盘点</p>
+            <h2 className="text-2.5xl font-bold text-gray-900">十二大成长探索领域</h2>
+            <p className="text-text-muted text-sm">选择适合您当前生活拼图的突破视角，进入细分图谱深入盘点</p>
           </div>
           
-          <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-3">
             {CATEGORIES.filter(c => c.id !== "all").map((cat) => (
               <div
                 key={cat.id}
                 onClick={() => onNavigate(`atlas?category=${cat.id}`)}
-                className="flex flex-col items-center justify-center p-5 rounded-2xl border border-gray-100 hover:border-primary/20 bg-gray-50/50 hover:bg-white cursor-pointer group transition-all duration-300 hover:shadow-md hover:scale-[1.03]"
+                className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 hover:border-primary/20 bg-gray-50/50 hover:bg-white cursor-pointer group transition-all duration-300 hover:shadow-md hover:scale-[1.03]"
               >
-                <div className="h-12 w-12 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-xs">
-                  <span className="material-symbols-outlined text-[24px]">{cat.icon}</span>
+                <div className="h-11 w-11 rounded-xl bg-primary/5 text-primary flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-xs">
+                  <span className="material-symbols-outlined text-[22px]">{cat.icon}</span>
                 </div>
-                <span className="text-sm font-bold text-gray-800 tracking-wide">{cat.label}</span>
-                <span className="text-[11px] text-text-muted mt-1 font-mono">
-                  {gaps.filter(g => g.category === cat.id).length || 2} 个精选
+                <span className="text-xs font-bold text-gray-800 tracking-wide text-center">{cat.label}</span>
+                <span className="text-[10px] text-text-muted mt-1 font-mono">
+                  {gaps.filter(g => g.category === cat.id).length || 1} 选
                 </span>
               </div>
             ))}
@@ -277,21 +277,21 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div className="space-y-4 max-w-xl text-center md:text-left z-10">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 text-primary border border-primary/20 text-xs font-semibold">
               <span className="material-symbols-outlined text-[14px]">psychology</span>
-              <span>1分钟世界潜力测试</span>
+              <span>1分钟成长可能性格匹配测试</span>
             </div>
             <h3 className="text-2xl md:text-3xl font-extrabold text-gray-900">
-              总资金、语言与背景不够？
+              探寻属于您的多元成长出口
             </h3>
             <p className="text-sm text-text-muted leading-relaxed">
-              根据你持有的底本筹码（英语水平、能拿出的预算、家庭现状及个人职业方向），我们为你精确算法匹配最容易跨越的那条专属世界信息差路线！
+              根据您当前的资源权重（背景专长、可用时间预算、个人成长偏好），AI图谱能够智能推荐出最契合您落地发掘的那套高性价比公共与学习方案！
             </p>
           </div>
 
           <button
             onClick={() => onNavigate("discovery")}
-            className="px-8 py-4 rounded-xl bg-primary hover:bg-primary-container text-white font-bold text-base transition-all shadow-lg shadow-primary/20 select-none z-10 whitespace-nowrap"
+            className="px-8 py-4 rounded-xl bg-primary hover:bg-primary-container text-white font-bold text-base transition-all shadow-lg shadow-primary/20 select-none z-10 whitespace-nowrap cursor-pointer"
           >
-            开始我的定制契合路线 ⚡️
+            开始匹配我的成长方案 ⚡️
           </button>
         </div>
       </section>
@@ -303,9 +303,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="h-10 w-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-lg shadow-xs">
               01
             </div>
-            <h4 className="font-bold text-gray-900">正规途径·坚实合法</h4>
+            <h4 className="font-bold text-gray-900">正规途径·绿色合法</h4>
             <p className="text-xs text-text-muted leading-relaxed">
-              本站整理项目来源于全球官方移民局、市政役所、联邦职业教育司在公共网域的法典和细则，坚决抵绝对冲与黑中介非法运作。
+              本站整理项目来源于全球及地方人社人保机构、公立图书馆和官方认证的换宿大联盟名录细则，确保全部正规合法。
             </p>
           </div>
 
@@ -313,9 +313,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-lg shadow-xs">
               02
             </div>
-            <h4 className="font-bold text-gray-900">去垄断化·拒绝暴利</h4>
+            <h4 className="font-bold text-gray-900">整合路径·解释清楚信息来源</h4>
             <p className="text-xs text-text-muted leading-relaxed">
-              把本应免费由政府和学校提供的直接办理路径从不法中介赚几十万元的黑盒子里拿出来。人人掌握，独立自助。
+              把原本对普通公众公开、无需中介代理的官方申请渠道整合编排，方便大家核验与操作。掌握主动，理顺人生。
             </p>
           </div>
 
@@ -323,9 +323,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="h-10 w-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-lg shadow-xs">
               03
             </div>
-            <h4 className="font-bold text-gray-900">开源互助·即时共享</h4>
+            <h4 className="font-bold text-gray-900">开放连接·青年共享</h4>
             <p className="text-xs text-text-muted leading-relaxed">
-              信息本无界，人人皆舵手。你踩过的坑就是别人的灯。加入世界贡献序列，点亮更繁茂的人生地图。
+              信息本无界，人生多可能。你分享出的真实实践历程就是他人前行的一盏明灯。一起参与，丰富图谱生态。
             </p>
           </div>
         </div>

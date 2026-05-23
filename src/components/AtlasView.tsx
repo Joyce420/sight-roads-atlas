@@ -82,7 +82,7 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
           <span>世界信息差图谱</span>
         </h1>
         <p className="text-sm text-text-muted">
-          由业内前1%玩家共同维护，覆盖全球留学就业通道、小众政策低门槛置业、离岸税务及合法身份筹划。
+          汇集青年权益福利、公共数字资源、城市落脚保障、实用AI工具、免费职业体验及极简生活方式的信息差图谱。
         </p>
       </div>
 

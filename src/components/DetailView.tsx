@@ -68,81 +68,65 @@ export const DetailView: React.FC<DetailViewProps> = ({
     e.preventDefault();
     const capital = parseFloat(userCapital) || 0;
     
-    // Simple custom simulation matching algorithm
-    let IsEligible = false;
-    let Score = 0;
+    let IsEligible = true;
+    let Score = 75;
     let Feedback = "";
 
-    if (gap.id === "1") {
-      // 德国双元制 (Ausbildung)
-      if (userLanguages.includes("German") || userLanguages.includes("德语") || userLanguages === "Both") {
-        Score = 95;
-        Feedback = "完美的德语特质！只要你开始向官方企业投递简历，成功率极高，几乎免资金负担。";
-        IsEligible = true;
+    // 1. Cost analysis
+    let minNeeded = 0.5; // default 5000元 (0.5w)
+    if (gap.difficulty === "medium") minNeeded = 1.0; // 1w
+    if (gap.difficulty === "high") minNeeded = 5.0; // 5w (e.g. Akiya or international full session)
+
+    // Specific overrides based on specific IDs or categories
+    if (gap.id === "6") {
+      minNeeded = 4.0; // Akiya renovation costs at least 4w for septic system
+    }
+
+    const hasEnoughCapital = capital >= minNeeded;
+
+    // 2. Language requirements
+    const needsLanguage = gap.category === "go_abroad" || gap.category === "see_world" || gap.id === "13";
+    const userHasLanguage = userLanguages === "English" || userLanguages === "Both" || userLanguages === "German";
+
+    // 3. Score weighting
+    if (hasEnoughCapital) {
+      Score += 15;
+    } else {
+      Score -= 25;
+      IsEligible = false;
+    }
+
+    if (needsLanguage) {
+      if (userHasLanguage) {
+        Score += 10;
       } else {
-        Score = 60;
-        Feedback = "唯一阻碍是德语。虽然您资金准备充分，但德国双元制 100% 绑定德语会话。建议花 6-10 个月将德语死磕至 B1 级。";
-        IsEligible = false;
-      }
-    } else if (gap.id === "2") {
-      // 爱沙尼亚 e-residency
-      if (capital >= 0.5) {
-        Score = 98;
-        Feedback = "您当前的流转资金绰绰有余。爱沙尼亚电子居民全套自办仅需 3000 多人民币，配合英文开发能力，建议立刻官网自办！";
-        IsEligible = true;
-      } else {
-        Score = 75;
-        Feedback = "项目本身仅需百元欧资金，但考虑到欧盟成立公司后续的代理托管费用（约150-200欧/年），建议资金量达到4000元以上再正式开启。";
-        IsEligible = true;
-      }
-    } else if (gap.id === "3") {
-      // 格鲁吉亚小微企业
-      if (capital >= 1.5) {
-        Score = 95;
-        Feedback = "极其契合！免签飞抵资本非常充沛。第比利斯的低生活成本以及 1% 的超低小微企业所得税可以为您省下巨额资产。";
-        IsEligible = true;
-      } else {
-        Score = 70;
-        Feedback = "主要是首期飞抵格鲁吉亚以及在第比利斯的短租落脚资金。若能筹备 1.5 万元及以上，随时可以走起，0%税一键到位。";
-        IsEligible = true;
-      }
-    } else if (gap.id === "4") {
-      // 日本老宅 Akiya
-      if (capital >= 15) {
-        Score = 90;
-        Feedback = "您的预算非常完美，完全足够买下空屋并进行现代化给排水重装和精美装潢！建议学习基本日语后去长野或静冈役所直接预约。";
-        IsEligible = true;
-      } else if (capital >= 4 && capital < 15) {
-        Score = 70;
-        Feedback = "虽然买下空置屋只要几千元，但是日本二次装修改造人工昂贵，合并净化槽更新一般需要 4 万元以上，建议精打细算亲自设计。";
-        IsEligible = false;
-      } else {
-        Score = 40;
-        Feedback = "预算偏低。日本部分老空屋虽为 0 元，但有高额契税及固定资产治理税要垫付，且没有翻修费容易陷入烂尾，建议先攒钱或考虑其他低成本项目。";
-        IsEligible = false;
-      }
-    } else if (gap.id === "5") {
-      // 加拿大 BC Tech
-      if (userLanguages === "English" || userLanguages === "Both") {
-        Score = 85;
-        Feedback = "英语水平及起步符合资质！这是不经过黑箱中介、完全凭借技术简历在 LinkedIn 上公开求职的最佳高技术移民路。请立刻优化英文简历！";
-        IsEligible = true;
-      } else {
-        Score = 55;
-        Feedback = "加拿大对英文（G类雅思）有硬性大门槛。虽然您资金充沛，但建议先花 3-6 个月将雅思稳定备考到 CLB 7 级。";
+        Score -= 15;
         IsEligible = false;
       }
     } else {
-      // 瓦努阿图 & 墨西哥
-      if (capital >= 1.5) {
-        Score = 98;
-        Feedback = "资产完美覆盖！不需要中介的 8 万黑箱代办费，直接带着材料赴香港领馆办理即可。几千块24小时即得卡。";
-        IsEligible = true;
+      if (userHasLanguage) Score += 5;
+    }
+
+    Score = Math.min(Math.max(Score, 30), 98);
+
+    // Feedback generation
+    if (IsEligible) {
+      Feedback = `测评匹配度极高！您当前的启动资金（${capital}万）符合该项目“${gap.difficultyLabel}”段位的基础自操开销。`;
+      if (needsLanguage && userHasLanguage) {
+        Feedback += ` 且您的外语优势完美契合该项目的日常查验和对接，建议立即访问官方指引自主申请核验！`;
       } else {
-        Score = 65;
-        Feedback = "自办规费及公证费用在数千元左右，此外部分项目需要一定的定期银行活期存款核验流水。建议先保证活期里有一笔备用万级流动资。";
-        IsEligible = false;
+        Feedback += ` 建议按部就班按上报步骤实作提交资格认证，省下多余的不透明中介代办费！`;
       }
+    } else {
+      Feedback = `测评指出潜在的自建自办阻力：`;
+      const reasons = [];
+      if (!hasEnoughCapital) {
+        reasons.push(`启动流动备用预算偏高（该项目预计需约合 ${minNeeded} 万元）`);
+      }
+      if (needsLanguage && !userHasLanguage) {
+        reasons.push(`外语技能不足（该项目自主申报需要较强外语查阅和撰写理解，建议利用翻译工具或自修雅思等重拳备战）`);
+      }
+      Feedback += reasons.join("，且") + `。不建议盲目跟风决策。建议提升个人的对应资质或稳步积攒预算后再行直达官网自办。`;
     }
 
     setSimulationResult({

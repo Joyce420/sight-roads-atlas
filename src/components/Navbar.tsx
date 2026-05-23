@@ -12,7 +12,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, savedCo
     { id: "atlas", label: "信息差图谱", icon: "travel_explore" },
     { id: "discovery", label: "兴趣发现测验", icon: "psychology" },
     { id: "contribute", label: "贡献信息差", icon: "polyline" },
-    { id: "my-map", label: "我的图谱地图", icon: "map" },
+    { id: "my-map", label: "我的收藏图谱", icon: "map" },
   ];
 
   return (
@@ -72,7 +72,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, savedCo
               <div className="h-5 w-5 rounded-full bg-green-500 flex items-center justify-center shadow-xs">
                 <span className="material-symbols-outlined text-[12px] text-white font-bold">check</span>
               </div>
-              <span className="text-xs text-text-main font-medium">离岸节点已连接</span>
+              <span className="text-xs text-text-main font-medium">数据资源服务已就绪</span>
             </div>
 
             {/* Simulated Avatar / Link to My Map */}
@@ -103,7 +103,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, savedCo
                 }`}
               >
                 <span className="material-symbols-outlined text-[22px]">{item.icon}</span>
-                <span className="text-[10px] font-medium">{item.label === "兴趣发现测验" ? "测验" : item.label === "我的图谱地图" ? "地图" : item.label}</span>
+                <span className="text-[10px] font-medium">{item.label === "兴趣发现测验" ? "测验" : item.label === "我的收藏图谱" ? "收藏" : item.label}</span>
               </button>
             );
           })}

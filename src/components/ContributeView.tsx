@@ -8,8 +8,8 @@ interface ContributeViewProps {
 
 export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavigate }) => {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<any>("study_work");
-  const [region, setRegion] = useState("欧洲");
+  const [category, setCategory] = useState<any>("welfare");
+  const [region, setRegion] = useState("全国/线上");
   const [difficulty, setDifficulty] = useState<any>("low");
   const [rating, setRating] = useState(4);
   const [tagline, setTagline] = useState("");
@@ -21,8 +21,8 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
   
   // Dynamic step array
   const [steps, setSteps] = useState<string[]>([
-    "准备前期材料、进行背景核准及语言死死磕",
-    "选择意向企业/机构进行简历直投对决"
+    "核实官方政策门槛，准备前期学籍、身份等验证材料",
+    "通过官网合规入口进行实名制资格申请或投递方案"
   ]);
 
   const [linkTitle1, setLinkTitle1] = useState("");
@@ -58,18 +58,24 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
       return;
     }
     if (tagline.trim().length < 8) {
-      alert("信息差亮点需要至少包含 8 个字以保持硬核度。");
+      alert("信息差亮点需要至少包含 8 个字。");
       return;
     }
 
     // Format categoryLabel
     const catLabelMap: { [key: string]: string } = {
-      study_work: "留学就业",
-      digital_nomad: "数字游民",
-      tax_arbitrage: "低税资产",
-      niche_property: "小众置业",
-      identity_visa: "规划身份",
-      lifestyle_travel: "生活旅行"
+      welfare: "权益福利",
+      public_resource: "公共资源",
+      city_opportunity: "城市机会",
+      policy_service: "政策服务",
+      see_world: "看世界",
+      go_abroad: "出国方式",
+      competition: "比赛项目",
+      monetization: "赚钱探索",
+      ai_tools: "AI工具",
+      career: "职业体验",
+      growth: "能力成长",
+      lifestyle: "生活方式"
     };
 
     const diffLabelMap: { [key: string]: string } = {
@@ -81,28 +87,28 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
     // Filter out empty steps
     const filteredSteps = steps.filter(s => s.trim() !== "");
     if (filteredSteps.length === 0) {
-      filteredSteps.push("按照官方移民局或役所官网要求提交全套公证材料。");
+      filteredSteps.push("按照官方指定政务窗口或官方网络指引提交全套实名认证。");
     }
 
     const newGap: InformationGap = {
       id: `custom_${Date.now()}`,
       title: title.trim(),
       category,
-      categoryLabel: catLabelMap[category] || "留学就业",
+      categoryLabel: catLabelMap[category] || "权益福利",
       region,
       difficulty,
       difficultyLabel: diffLabelMap[difficulty] || "简单",
       rating,
       tagline: tagline.trim(),
-      description: description.trim() || `${title}的全套信息差自办通关方案。`,
-      coreGap: coreGap.trim() || "传统常人由于对底层法令的不了解，过度依赖非法雇主或中介包打听买卖，蒙受大额资金损失。自办全材料仅需数千官币规费即可直发无盖。",
-      appliedTo: appliedTo.trim() || "追求精细化开销、具有极高执行力的青年极客群。",
-      costEstimation: costEstimation.trim() || "前期规费约 1.5 万元左右",
-      timeline: timeline.trim() || "准备与审批共需 6 个月左右",
+      description: description.trim() || `${title}的全套信息差自建自办方案。`,
+      coreGap: coreGap.trim() || "许多人因信息闭塞常支付过高代理服务费。事实上，通过官方公布流程自主申请，公开、安全、且大部分不设额外手续费用。",
+      appliedTo: appliedTo.trim() || "寻求自主探索学识和求学求职的普通高校学子、创作者及有再学习需求的普通市民。",
+      costEstimation: costEstimation.trim() || "官方自办完全免费，仅需自负路费与简单工本复核款",
+      timeline: timeline.trim() || "自主填备并提交（1-5分钟） + 官方复核（3-10个工作日）",
       practicalSteps: filteredSteps,
-      relatedLinks: linkTitle1.trim() && linkUrl1.trim() ? [{ title: linkTitle1.trim(), url: linkUrl1.trim() }] : [{ title: "该项目官方合规公示入口", url: "https://google.com" }],
-      scenarios: scenarios.trim() || `素人李某（化名），之前由于信息偏差被某些中介索要高额巨款。后来根据官方指引一步步筹备材料，最终在完全没有找中介的情况下通过了审核、省下了近10万的智商溢价。`,
-      risksAndWarmings: risksAndWarmings.trim() || "1. 必须完全以真实无误的材料原件递交。 2. 注意跟进官方规则的政策窗口，避免遭遇停摆。",
+      relatedLinks: linkTitle1.trim() && linkUrl1.trim() ? [{ title: linkTitle1.trim(), url: linkUrl1.trim() }] : [{ title: "地方一网通办及官方保障服务入口", url: "https://www.gov.cn" }],
+      scenarios: scenarios.trim() || `市民小李（化名），之前不知道能够线上免费申办此福利。阅读信息差指引后，自己线上直达国家认证窗口，足不出户便顺利办成了全部资质、省去了中介代办开销。`,
+      risksAndWarmings: risksAndWarmings.trim() || "1. 必须绝对保证申请材料真实、合规，禁止弄虚作假。 2. 部分补助具有区域及限时限额，请申请前向有关官方热线咨询核定。",
       author: "独立贡献家",
       date: new Date().toISOString().split("T")[0],
       views: 120,
@@ -127,7 +133,7 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
           <span>共享世界信息差！加入贡献序列</span>
         </h1>
         <p className="text-sm text-text-muted">
-          发现并写下您亲自踏勘成功的跨境套利、带薪留学、离岸资产或捷径自办指南。抹平信息黑洞。
+          发现并共享您实际体验或自检成功的公共权益、福利资源、官方补贴、实用AI工具、免费职业体验及极简生活方式。
         </p>
       </div>
 
@@ -155,18 +161,18 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-6">
           <div className="p-4 rounded-2xl bg-primary/4 border border-primary/10 text-xs text-primary font-semibold flex items-start gap-2">
             <span className="material-symbols-outlined text-[18px]">verified_user</span>
-            <span>由于本图谱极度推崇硬核真实性，请拒绝虚假、夸大或没有真凭实据的内容上报。所有的步骤须包含官网或具体的官方行文逻辑支撑。</span>
+            <span>出于对公共利益和公信力的重视，请拒绝虚假、夸大或无凭据的投稿。所有上报条目应对应具体的官方信息公告或办事指南。</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Project Title */}
             <div className="space-y-1.5 md:col-span-2">
-              <label className="text-xs font-bold text-gray-700 block">📝 信息差项目名称与国家/地区</label>
+              <label className="text-xs font-bold text-gray-700 block">📝 信息差项目名称与代表地区</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="如：“德国双元制职业学徒申请” 或 “格鲁吉亚小微企业0税实操”"
+                placeholder="如：“某省高校毕业生首套住房补贴申办” 或 “免押金电子阅览证查文献”"
                 required
                 className="w-full text-xs font-semibold px-4 py-3 border border-gray-200 bg-gray-50/40 hover:bg-white focus:bg-white rounded-xl focus:outline-hidden focus:border-primary/50 text-gray-800"
               />
@@ -180,29 +186,35 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
                 onChange={(e) => setCategory(e.target.value as any)}
                 className="w-full text-xs font-bold px-3 py-2.5 border border-gray-200 bg-white rounded-xl focus:outline-hidden focus:border-primary/50 text-gray-800"
               >
-                <option value="study_work">留学就业 (Ausbildung/工作签...)</option>
-                <option value="digital_nomad">数字游民 (跨境公司/DNV居留...)</option>
-                <option value="tax_arbitrage">低税资产 (微型企业1%所得税...)</option>
-                <option value="niche_property">小众置业 (日本空屋/白菜价地...)</option>
-                <option value="identity_visa">规划身份 (捷径绿卡、自办身份...)</option>
-                <option value="lifestyle_travel">生活旅行 (免签白卡、极低环游...)</option>
+                <option value="welfare">权益福利 (官方生活补贴、免票或折扣特权...)</option>
+                <option value="public_resource">公共资源 (全国数字图书馆、学术资源公共通道...)</option>
+                <option value="city_opportunity">城市机会 (青年人才驿站免费借宿、过渡保障...)</option>
+                <option value="policy_service">政策服务 (人事档案免费存放、一网通办指引...)</option>
+                <option value="see_world">看世界 (低门槛探幽、国际 YHA 通卡优惠福利...)</option>
+                <option value="go_abroad">出国方式 (校方全额短期访学交流、免伙食海外夏令营...)</option>
+                <option value="competition">比赛项目 (低代码人文社创设计赛、文创创意投送赛...)</option>
+                <option value="monetization">赚钱探索 (兼职对外翻译众包、技能远程分包协作...)</option>
+                <option value="ai_tools">AI工具 (利用官方开发者 API 免费限额进行科研翻译...)</option>
+                <option value="career">职业体验 (生态有机农场劳动体验、著名精品换宿交换...)</option>
+                <option value="growth">能力成长 (失业保险技能再学习返款、官方线上培训大厅...)</option>
+                <option value="lifestyle">生活方式 (闲置老屋空置房转让、低持营营建慢生活美学...)</option>
               </select>
             </div>
 
             {/* Region dropdown */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-700 block">🌐 代表国家和地区大洲</label>
+              <label className="text-xs font-bold text-gray-700 block">🌐 代表落脚国家与地区大洲</label>
               <select
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
                 className="w-full text-xs font-bold px-3 py-2.5 border border-gray-200 bg-white rounded-xl focus:outline-hidden focus:border-primary/50 text-gray-800"
               >
-                <option value="欧洲">欧洲 (如德/英/法/爱沙尼亚/欧盟...)</option>
-                <option value="北美">北美 (如加/美/墨西哥...)</option>
-                <option value="亚洲">亚洲 (如日/韩/新加坡/泰国...)</option>
-                <option value="中东/中亚">中东/中亚 (如格鲁吉亚/迪拜...)</option>
-                <option value="大洋洲">大洋洲 (如新西兰/澳洲/瓦努阿图...)</option>
-                <option value="拉丁美洲">拉丁美洲 (如巴西/阿根廷...)</option>
+                <option value="全国/线上">全国/线上 (不受地域物理限值)</option>
+                <option value="华东沿海">华东沿海 (如江浙沪皖高技术生态区...)</option>
+                <option value="华南大湾区">华南大湾区 (如粤港澳特区青年双轨发展...)</option>
+                <option value="西南西北">西南西北 (如云南大理、甘陕川原野生态体验...)</option>
+                <option value="华北中部">华北中部 (如京津冀、华中沿长江名区...)</option>
+                <option value="全球/海外">全球/海外 (如东亚日韩、新加坡、欧美及东南半岛...)</option>
               </select>
             </div>
 
@@ -242,7 +254,7 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
                 type="text"
                 value={tagline}
                 onChange={(e) => setTagline(e.target.value)}
-                placeholder="如：“零学费，自带大企业薪水，3年直达永居，告别黑中介包揽陷阱。”"
+                placeholder="如：“零学费，自带企业补贴，多渠道直达，告别不透明服务包揽陷阱。”"
                 required
                 className="w-full text-xs font-semibold px-4 py-3 border border-gray-200 rounded-xl focus:outline-hidden focus:border-primary/50 text-gray-800"
               />

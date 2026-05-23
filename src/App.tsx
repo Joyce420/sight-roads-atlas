@@ -204,7 +204,7 @@ export default function App() {
           </div>
 
           <p className="max-w-md mx-auto leading-relaxed">
-            信息本无界，人生的出口不止一条。抹平信息垄断门阀，以坚实的行动，发现和开垦属于自己合规正规的低预算彼岸。
+            信息本无界，人生的选择不止一条。以踏实的行动发掘公共及智能资源，探索更广阔宽广的生活与职业可能。
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-gray-500 font-bold">
@@ -216,13 +216,13 @@ export default function App() {
             <span>·</span>
             <button onClick={() => handleNavigate("contribute")} className="hover:text-primary transition-colors">共享加入</button>
             <span>·</span>
-            <button onClick={() => handleNavigate("my-map")} className="hover:text-primary transition-colors">离岸地图</button>
+            <button onClick={() => handleNavigate("my-map")} className="hover:text-primary transition-colors">收藏图谱</button>
           </div>
 
           <div className="pt-4 border-t border-gray-100 max-w-lg mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-gray-400">
             <span>© 2026 See More Roads Atlas. Open-source under MIT.</span>
             <span className="flex items-center gap-1 font-mono">
-              <span>STATUS: OFF-GRID DISTRIBUTOR CONNECTED</span>
+              <span>STATUS: ATLAS SERVICE READY</span>
               <span className="h-1.5 w-1.5 bg-green-500 rounded-full animate-pulse"></span>
             </span>
           </div>

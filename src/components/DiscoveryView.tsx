@@ -18,7 +18,7 @@ interface Question {
 }
 
 export const DiscoveryView: React.FC<DiscoveryViewProps> = ({ gaps, onSelectGap }) => {
-  const [currentStep, setCurrentStep] = useState<number>(0); // 0 corresponds to introductory, 1-5 to questions, 6 to outcome
+  const [currentStep, setCurrentStep] = useState<number>(0); // 0 corresponds to introductory, 1-4 to questions, 5 to outcome
   const [answers, setAnswers] = useState<string[]>([]);
   const [recommendedGap, setRecommendedGap] = useState<InformationGap | null>(null);
   const [fitScore, setFitScore] = useState<number>(100);
@@ -26,131 +26,114 @@ export const DiscoveryView: React.FC<DiscoveryViewProps> = ({ gaps, onSelectGap 
   const questions: Question[] = [
     {
       id: 1,
-      text: "你首要的跨国套利核心诉求是？",
+      text: "你首要渴望立即掌握或体验哪一维度的核心信息差？",
       icon: "target",
       options: [
         {
           key: "A",
-          text: "极其渴望用最便宜、免学费、甚至发工资的方式在欧洲高质就业，谋定长足永居",
-          points: { "1": 50, "5": 20 }
+          text: "渴望通过合规的统筹途径，配合定点医疗保障和双通道机制便捷配置所需药品",
+          points: { "1": 55 }
         },
         {
           key: "B",
-          text: "渴望摆脱办公室卷，作为数字游民在欧洲或低成本天国远程办公，并合法省下巨额高个税",
-          points: { "2": 50, "3": 50 }
+          text: "希望掌握主要公立图书馆的数字库免费对外接入渠道，合规下载并阅读知网及专业文献",
+          points: { "2": 55 }
         },
         {
           key: "C",
-          text: "想用买一碗拉面的白菜价格，在日本或依山傍水的地方拥有一栋完全属于自己的和风大别墅房产",
-          points: { "4": 50 }
+          text: "异地寻找一二线城市工作，想在落脚阶段申请地方人社或团委设立的青年过渡公共驿站",
+          points: { "3": 55 }
         },
         {
           key: "D",
-          text: "急需为子女配置低预算的、能在两周内极速搞定的合法第三国绿卡，以通过国际学校入学大关",
-          points: { "6": 50 }
+          text: "希望自主申请并利用各大主流 AI 平台的免费测试开发额度，以辅助个人研究和文献翻译",
+          points: { "4": 55 }
+        },
+        {
+          key: "E",
+          text: "希望了解注重社会实践、对代码门槛要求友好的知名青年公益与创意竞赛",
+          points: { "5": 55 }
+        },
+        {
+          key: "F",
+          text: "对日本空屋（Akiya）登记册和乡村闲置住宅修缮与移居政策资讯有浓厚兴趣",
+          points: { "6": 55 }
+        },
+        {
+          key: "G",
+          text: "想通过合理的志愿服务在民宿或生态农场对等交换借食宿，体验深度的慢生活与斜杠旅居",
+          points: { "7": 55 }
         }
       ]
     },
     {
       id: 2,
-      text: "目前可以随时调用的自由启动备用金资产有多少？",
+      text: "面对实操，你目前觉得最现实合理的启动备用金或时间资本？",
       icon: "account_balance_wallet",
       options: [
         {
           key: "A",
-          text: "极度吃紧！首期只能拿出约 0.5w - 1.5w 人民币用于考语言和办材料",
-          points: { "1": 50, "2": 30, "3": 10 }
+          text: "预算极其精紧 (0 ~ 100元)，只想凭纯线上自助亲办或付出几小时轻度体力劳动来实现",
+          points: { "2": 45, "4": 45, "7": 50 }
         },
         {
           key: "B",
-          text: "有一些积蓄，可以调拨约 1.5w - 4w 人民币的流动资金",
-          points: { "2": 50, "3": 45, "6": 50 }
+          text: "有一点自由支配余钱 (几百至几千元)，可作为异地简历应聘、比赛创意答辩阶段的车马费用",
+          points: { "1": 40, "3": 50, "5": 45 }
         },
         {
           key: "C",
-          text: "能腾充余，可准备 4w - 15w 人民币的装修或启动支出",
-          points: { "4": 30, "5": 50, "6": 40 }
-        },
-        {
-          key: "D",
-          text: "储备完美，20 万元人民币及以上无明显财务抗力",
-          points: { "4": 50, "5": 50 }
+          text: "能拿出几万元的独立备用定金，用于置办心仪美学老宅、司法材料或大改造硬件物料",
+          points: { "6": 50, "1": 35 }
         }
       ]
     },
     {
       id: 3,
-      text: "评估当前最真实的英语或其他外语硬实力？",
-      icon: "translate",
+      text: "评估当前您个人或团队最引以为傲的生活或工作技艺？",
+      icon: "construction",
       options: [
         {
           key: "A",
-          text: "英语流利，可以极其顺畅地浏览全英文官网、写英文简历、应对硅谷或温哥华技术面试",
-          points: { "5": 50, "2": 40 }
+          text: "对网络搜索极为狂热，懂简单的浏览器配置或小客户端密钥对接调试",
+          points: { "4": 50, "6": 30, "2": 40 }
         },
         {
           key: "B",
-          text: "懂一点点小语种，或者极有毅力，愿意为此花大半年死磕一门非英语（如刻苦攻读德文/日文）",
-          points: { "1": 50, "4": 40 }
+          text: "善于发现身边的人文温情痛点，文字表达富有同理心且对创意设计策划有浓厚兴趣",
+          points: { "5": 50, "2": 45 }
         },
         {
           key: "C",
-          text: "英语比较破碎，只能听懂简单会话，但抗打击能力极高，可以跟着教程一步步自办填表",
-          points: { "6": 50, "3": 40, "2": 30 }
+          text: "身体健康，乐意从事咖啡冲煮、民宿打扫、锄草有机种植等面对面的真实手艺实操",
+          points: { "7": 50, "6": 40 }
         },
         {
           key: "D",
-          text: "讨厌语言死磕，希望能走最省材料、几乎无语言考核的高速自通直发通道",
-          points: { "6": 50, "3": 30 }
+          text: "办事细心守规则，具有基本完备的本地社保参保记录和基础大学学籍材料",
+          points: { "1": 50, "3": 50 }
         }
       ]
     },
     {
       id: 4,
-      text: "评估你的专业、一技之长或主要底盘优势是什么？",
-      icon: "construction",
-      options: [
-        {
-          key: "A",
-          text: "程序员、网页开发、数据研发、UI设计等数字可远程交付工种",
-          points: { "5": 50, "2": 45, "3": 40 }
-        },
-        {
-          key: "B",
-          text: "护理医疗、酒店接待、西点烘焙、机电精密仪器等重实操、有体力或特定手艺的蓝领技能",
-          points: { "1": 50 }
-        },
-        {
-          key: "C",
-          text: "自营跨境网店、外语翻译、写作创作、视频自媒体剪辑等线上创意自雇工作",
-          points: { "2": 50, "3": 50 }
-        },
-        {
-          key: "D",
-          text: "没有特别的技术包袱，但我学习能力极强，可以遵守严密纪律和行政指令",
-          points: { "6": 50, "4": 45 }
-        }
-      ]
-    },
-    {
-      id: 5,
-      text: "你的期望达成周期或目前能够承担的抗压过渡期？",
+      text: "您期望取得直接回馈或者执行完成的最理想目标周期？",
       icon: "date_range",
       options: [
         {
           key: "A",
-          text: "时不我待！极度火急，希望能由我直接亲办，在几个月内（甚至两周）飞速见效",
-          points: { "6": 50, "3": 30 }
+          text: "雷厉风行！最好 10 分钟到几小时内，填表注册即可瞬间下发开通或拿到特权",
+          points: { "2": 50, "4": 50 }
         },
         {
           key: "B",
-          text: "踏踏实实。我可以接受 6 - 12 个月的死磕，一边上班攒钱、一边精进外语和投简历",
-          points: { "1": 45, "2": 45, "5": 40 }
+          text: "稳打稳扎。由于涉及线下差旅或名师评估，可以接受 1 到 4 周左右的细心对接流程",
+          points: { "1": 40, "3": 50, "7": 45 }
         },
         {
           key: "C",
-          text: "长期工程。无所谓花费多久，我只想踏实寻找最稳当的终极世外桃源并在日本地方买一套属于我的产业",
-          points: { "4": 50, "1": 30 }
+          text: "深度工程。这是一条涉及全套产权过户、需要 1 到 6 个月深度准备周期的地方居住项目与慢生活方式探索",
+          points: { "6": 50, "5": 30 }
         }
       ]
     }
@@ -220,10 +203,10 @@ export const DiscoveryView: React.FC<DiscoveryViewProps> = ({ gaps, onSelectGap 
             
             <div className="space-y-2">
               <h1 className="text-2xl md:text-3xl font-extrabold text-gray-950">
-                1分钟信息差深度契合度自测评
+                1分钟成长可能性格与方向匹配测评
               </h1>
               <p className="text-sm text-text-muted max-w-xl mx-auto leading-relaxed">
-                高难度的移民或者昂贵的中介项目真的适合你吗？本算法通过五道维度选择，推演出最容易戳破、在资质上最契合你的人生的套利突围路线。
+                省去高价代办业务。本测验能够通过四大基础资源维度，智能匹配符合您当下技能与预算条件的成长方案。
               </p>
             </div>
 
@@ -231,36 +214,36 @@ export const DiscoveryView: React.FC<DiscoveryViewProps> = ({ gaps, onSelectGap 
               <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex items-start gap-2.5">
                 <span className="material-symbols-outlined text-green-600 text-xl font-bold">check_circle</span>
                 <div>
-                  <h4 className="text-xs font-bold text-gray-800">资本无偏对齐</h4>
-                  <p className="text-[10.5px] text-text-muted mt-0.5">精准防超预算虚耗</p>
+                  <h4 className="text-xs font-bold text-gray-800">资源预算拦截</h4>
+                  <p className="text-[10.5px] text-text-muted mt-0.5">精准防超个人开支天限</p>
                 </div>
               </div>
               <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex items-start gap-2.5">
                 <span className="material-symbols-outlined text-indigo-600 text-xl font-bold">check_circle</span>
                 <div>
-                  <h4 className="text-xs font-bold text-gray-800">外语瓶颈拦截</h4>
-                  <p className="text-[10.5px] text-text-muted mt-0.5">筛选真实的语言门槛</p>
+                  <h4 className="text-xs font-bold text-gray-800">外语与技术门槛</h4>
+                  <p className="text-[10.5px] text-text-muted mt-0.5">筛选真实有效的操作难点</p>
                 </div>
               </div>
               <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex items-start gap-2.5">
                 <span className="material-symbols-outlined text-blue-600 text-xl font-bold">check_circle</span>
                 <div>
-                  <h4 className="text-xs font-bold text-gray-800">直办难度校合</h4>
-                  <p className="text-[10.5px] text-text-muted mt-0.5">规划落地，拒绝空谈</p>
+                  <h4 className="text-xs font-bold text-gray-800">落地直办向导</h4>
+                  <p className="text-[10.5px] text-text-muted mt-0.5">规划实际，拒绝繁复口口授</p>
                 </div>
               </div>
             </div>
 
             <button
               onClick={handleStartQuiz}
-              className="px-8 py-4 rounded-xl bg-primary hover:bg-primary-container text-white font-extrabold text-base transition-all shadow-lg shadow-primary/15 select-none"
+              className="px-8 py-4 rounded-xl bg-primary hover:bg-primary-container text-white font-extrabold text-base transition-all shadow-lg shadow-primary/15 select-none cursor-pointer"
             >
-              立刻开启极客推算测验 ⚡️
+              立刻开启匹配测试 ⚡️
             </button>
           </div>
         )}
 
-        {/* Step 1 to 5: Question Card */}
+        {/* Step 1 to 4: Question Card */}
         {currentStep > 0 && currentStep <= questions.length && (
           <div className="space-y-6">
             {/* Progress tracker */}
@@ -268,7 +251,7 @@ export const DiscoveryView: React.FC<DiscoveryViewProps> = ({ gaps, onSelectGap 
               <span className="text-xs font-extrabold text-primary font-mono tracking-wider">
                 DIMENSION {currentStep} / {questions.length}
               </span>
-              <span className="text-[11px] text-text-muted">
+              <span className="text-[11px] text-text-muted font-bold">
                 完成进度 {Math.round(((currentStep - 1) / questions.length) * 100)}%
               </span>
             </div>
@@ -320,13 +303,13 @@ export const DiscoveryView: React.FC<DiscoveryViewProps> = ({ gaps, onSelectGap 
                 className="text-xs text-text-muted hover:text-red-500 hover:underline inline-flex items-center gap-1 font-bold"
               >
                 <span className="material-symbols-outlined text-[13px]">close</span>
-                <span>取消并清空当前的答题卡</span>
+                <span>重新开始测评选项</span>
               </button>
             </div>
           </div>
         )}
 
-        {/* Step 6: Result Output */}
+        {/* Step 5: Result Output */}
         {currentStep === questions.length + 1 && recommendedGap && (
           <div className="space-y-8 animate-fade-in">
             <div className="text-center space-y-3">
@@ -334,41 +317,41 @@ export const DiscoveryView: React.FC<DiscoveryViewProps> = ({ gaps, onSelectGap 
                 <span className="material-symbols-outlined text-4xl animate-bounce">verified</span>
               </div>
               <h2 className="text-2xl font-extrabold text-gray-950">
-                契合测算：已成功匹配你的人生图谱！
+                契合推演成功：已生成定制推荐！
               </h2>
-              <p className="text-sm text-text-muted max-w-md mx-auto">
-                算法基于您提供的英语底本、预算、周期及专业技能，以下这条路线能够为您绕开暴利中介，实现最优突击。
+              <p className="text-sm text-text-muted max-w-md mx-auto leading-relaxed">
+                数据基于您的日常实务特长、可用周期及财务期望，以下这条生活信息差路线在各维度上与您的条件最为匹配。
               </p>
             </div>
 
             {/* Fit score big meter */}
             <div className="bg-primary/5 border border-primary/10 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6 justify-between">
               <div className="space-y-1 text-center sm:text-left">
-                <div className="text-xs text-primary font-bold">PROPOSAL MATCH SCORE</div>
-                <h3 className="text-xl font-extrabold text-gray-950">项目契合概率指数：<span className="text-primary text-2xl">{fitScore}%</span></h3>
-                <p className="text-xs text-text-muted">
-                  该路线与您的闲置准备金以及外语磨死毅力有极高维度的相互重叠，抗压阻力极微弱。
+                <div className="text-xs text-primary font-bold">GROWTH MATCH INDEX</div>
+                <h3 className="text-xl font-extrabold text-gray-950">生活路径契合度：<span className="text-primary text-2xl">{fitScore}%</span></h3>
+                <p className="text-xs text-text-muted leading-relaxed">
+                  该方案能够极大契合您的主客观优势和日常事务，转化执行抗力几乎为 0。
                 </p>
               </div>
 
-              <div className="h-20 w-20 rounded-full border-4 border-dashed border-primary/30 flex items-center justify-center text-primary font-bold text-lg select-none">
+              <div className="h-16 w-16 rounded-full border-4 border-dashed border-primary/30 flex items-center justify-center text-primary font-bold text-sm select-none shrink-0">
                 🌟 HIGH
               </div>
             </div>
 
             {/* Recommended gap summary dashboard */}
-            <div className="bg-white border border-gray-100 rounded-2xl shadow-xs p-6 space-y-4">
+            <div className="bg-white border border-gray-150 rounded-2xl shadow-xs p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="px-2.5 py-1 text-[11px] font-bold text-primary bg-primary/6 rounded-lg uppercase">
                   {recommendedGap.categoryLabel}
                 </span>
-                <span className="text-xs font-bold font-mono text-text-muted">
+                <span className="text-xs font-bold font-mono text-gray-500">
                   📍 {recommendedGap.region} · 难度 {recommendedGap.difficultyLabel}
                 </span>
               </div>
 
               <div className="space-y-2">
-                <h4 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">
+                <h4 className="text-base font-bold text-gray-900 group-hover:text-primary transition-colors">
                   {recommendedGap.title}
                 </h4>
                 <p className="text-xs font-bold text-primary-container leading-relaxed">
@@ -384,16 +367,16 @@ export const DiscoveryView: React.FC<DiscoveryViewProps> = ({ gaps, onSelectGap 
                 <button
                   type="button"
                   onClick={() => onSelectGap(recommendedGap.id)}
-                  className="w-full py-3 px-4 bg-primary hover:bg-primary-container text-white text-xs font-bold rounded-xl text-center shadow-md shadow-primary/10 select-none cursor-pointer"
+                  className="w-full py-3 px-4 bg-primary hover:bg-primary-container text-white text-xs font-bold rounded-xl text-center shadow-md shadow-primary/15 select-none cursor-pointer"
                 >
-                  去查看该项目的实操全步骤 &gt;
+                  去查看本方案实操全步骤 &gt;
                 </button>
                 <button
                   type="button"
                   onClick={handleRestart}
                   className="w-full py-3 px-4 border border-gray-200 hover:border-gray-300 text-gray-700 text-xs font-bold rounded-xl text-center select-none cursor-pointer"
                 >
-                  不感兴趣？重新检测一次
+                  我想换选项，重新评测一次
                 </button>
               </div>
             </div>

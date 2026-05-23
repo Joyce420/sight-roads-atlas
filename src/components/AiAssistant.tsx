@@ -11,7 +11,7 @@ export const AiAssistant: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: "ai",
-      text: "您好！我是『看见更多路』全球信息套利AI领航小秘书。我可以帮您极速精准研判全球带薪免学徒留学、离岸1%企业税筹、日本白菜价空房置办，以及规避十万元暴利中介防坑指南。您目前持有几万流动资金，最想打破哪方面的信息垄断？",
+      text: "您好！我是『看见更多路』世界信息差图谱的智能辅助助理。我可以帮您快速整理关于国家及地方医保大病双通道、公立网络学术文献免费免押获取、一二线城市青年人才驿站免费短期借宿福利、AI生产力提效、全国青年公益与创意竞赛以及生态义工换宿旅行的信息差。您想了解以上哪一方面，从而探索更广阔、更多样生命道路的底牌选项？",
       time: "刚刚"
     }
   ]);
@@ -28,31 +28,32 @@ export const AiAssistant: React.FC = () => {
   }, [messages, isTyping]);
 
   const quickQuestions = [
-    { label: "如何零资金肉身移居欧洲？", q: "如何零资金、靠发工资的形式去欧洲合法工作生活并快拿绿卡？" },
-    { label: "远程自雇1%微税底牌？", q: "数字游民有哪些年营业额十几万美元、税率只有0%-1%的开户自雇方案？" },
-    { label: "防十万中介黑箱绿卡坑？", q: "如何自办几千块工本的瓦国/墨西哥绿卡？中介要八万坑在哪？" }
+    { label: "学术文献如何合规免费查阅？", q: "如何不用学校账号，完全合规、免费地查阅并下载知网与万方学术论文？" },
+    { label: "应届毕业生免费短期住宿？", q: "异地找工作，一二线城市如何申请 7 至 15 天的政府免费青年人才驿站？" },
+    { label: "AI工具如何获取开发者额度？", q: "如何合规申请主流的大模型 API 密钥免费测试限额，并辅助高质翻译文献？" },
+    { label: "义工换宿和慢生活怎么玩？", q: "斜杠或空窗期，如何通过每天几小时的轻劳动对等兑换各地民宿与农场食宿？" }
   ];
 
   const getAiResponse = (userQ: string): string => {
     const q = userQ.toLowerCase();
     
-    if (q.includes("零资金") || q.includes("发工资") || q.includes("欧洲") || q.includes("德") || q.includes("双元制") || q.includes("留")) {
-      return `【AI 精算结论 · 带薪突围欧洲航线】\n\n您看中的正是大名鼎鼎的 **德国“双元制” (Ausbildung)**。该路线最大的信息死角是：国人盲目以为留欧必须有雅司高分和百万银行担保。\n\n实际上，双元制的底层政策极度朴素：\n1. 免除全部职业学校学费；\n2. 德国大厂或协作企业每月直接给学生划发 **1000 - 1400 欧元的带薪学徒津贴**，完全可覆盖您的吃住生活开销；\n3. 毕业100%兜底劳动合同。毕业起薪通常在税前 2800-3800 欧。\n\n【唯一的铁门槛】：将德语死磕扎实到 B1 或 B2 等级，直接通过 Ausbildung.de 无中介直投，无需支付中介任何一分黑箱套利费。这是极少数大专与技术青年实现白手连通欧洲的黄金方案！`;
+    if (q.includes("知网") || q.includes("学术") || q.includes("文献") || q.includes("论文") || q.includes("图书馆") || q.includes("免费下载")) {
+      return `【图谱解答 · 智能学术公共资源】\n\n您看中的正是 **“公立图书馆数字资源共享网络”**。这也是面向公众免费开放、通过国家公共财政保障的文献查阅途径：\n\n1. **全国大型公立图书馆已为您代付学术平台使用费**：国内众多省市级大型图书馆每年均拨付专项大额经费，采购知网（CNKI）、万方、维普和超星数字化图书等学术数据库的公共接入权限。\n2. **完全零门槛线上办理**：全国居民不论身处何地，大部分均可线上免费实名注册这些图书馆的虚拟读者卡，获取对应的数字账号。\n3. **合规直连、省电下载**：使用电子借阅卡登录图书馆的官网，并在其数字资源板块直接点入学术入口，即可享有每天的免费额度，无需另购共享账户，符合合规合理使用，即可免费查阅并下载所需论文，让科研、写手求学无压力！`;
     }
     
-    if (q.includes("税") || q.includes("数字游民") || q.includes("离岸") || q.includes("自雇") || q.includes("格鲁吉亚") || q.includes("爱沙尼亚")) {
-      return `【AI 离岸财富精算 · 游民低税走廊】\n\n对于远程全栈开发者、外包接单团队及 Shopify 跨境电商，最恐怖的损耗是 **20%-45%阶梯个税和跨境结汇重重盘查**。目前业内老手普遍采用以下两个黄金模型自办节税：\n\n1. **格鲁吉亚小微自雇 (Small Business)**：只要您年营业额在大约 18 万美元（50万拉里）以下，且属于自雇非受限行业，在首都司法大厅仅需一张护照+百元开户规费，所得税率直接暴减至 **微不足道的 1%**！甚至部分微型自营还是 **0%**！\n2. **爱沙尼亚 e-Residency 盾卡**：120欧开户在华领事馆录指纹取卡，可在各大游民胜地（巴厘岛、巴塞罗那等）在线打理合规的欧盟有限公司，实行**未分配利润0%企业税**，无缝对接国际 Wise 银行和 Stripe 结算，直接降降降！`;
+    if (q.includes("住宿") || q.includes("驿站") || q.includes("应届") || q.includes("找工作") || q.includes("宿舍") || q.includes("落脚")) {
+      return `【图谱解答 · 城市机会人才驿站】\n\n对于刚从学校走出的学生或毕业生，异地应聘、线下面试时的短期租宿与房租押金，往往是个不折不扣的起步压力。官方已提供政策性住宿扶助计划：\n\n1. **地方团市委与人社部门开设有保障安全的“青年人才驿站”**：深圳、成都、上海区级、杭州等国内几十个城市，均设立了设施全备的免费青年人才驿站客栈。\n2. **提供短期借宿和托底过渡期**：通常单次可享受 3 至 15 天不等的免住宿费住宿、附设空调、无线网、卫生用品，环境安全，管理正规。\n3. **申请材料朴素求真**：凡具备大中专学历及应届毕业生资格，附带在该城市的求职简历投递记录、或者用人单位开给您的复试短信，即可通过官方小程序自行申请办理。驿站还经常有免费的名业内推等公益帮扶，能极佳地缓解毕业前的临时住房焦虑。`;
     }
 
-    if (q.includes("绿卡") || q.includes("中介") || q.includes("自办") || q.includes("瓦努阿图") || q.includes("墨西哥") || q.includes("跳板")) {
-      return `【AI 身份避坑公示 · 廉价直自发跳板】\n\n您问到了暴利中介最怕被挑明的死角：**“瓦努阿图绿卡” or “墨西哥居留”**。\n\n大批涉外机构专门诱骗为了孩子入国际学校在沪深奔走的家长，喊出 **8w 至 12万人民币** 的高昂全套代办费。\n\n但大盘核算的真相是：**瓦国永久居留卡（小白卡）其政府直接官办规费只需要千元左右！**\n\n【如何零中介自封直办】：\n只要亲自备妥国内公证处盖章的“无犯罪记录证明”和银行能打印出的“十万活期理财存款信”，直接带着全套原件邮寄致电给瓦努阿图驻香港总领事馆的公署柜台并按白纸黑字缴纳政府官印规费。领馆处理极速，甚至在 **24 小时当场即可给你制出正本钢印绿卡及领事长确认蓝信**。坚决不接受任何非法加层！`;
+    if (q.includes("ai") || q.includes("模型") || q.includes("翻译") || q.includes("密钥") || q.includes("额度") || q.includes("工具")) {
+      return `【图谱解答 · 智能 AI 效率工具】\n\n想要在学术翻译、文档润色、自媒体编写上高效提速，如何绕过层层多余收费的转发镜像网站？\n\n【官方渠道提供的开发者额度方案】\n1. **大厂原生免费测试额度**：各大平台通常在开发者后台（如 Google AI Studio）向个人研发者及普通大众提供非商用的免费测试 API 额度，供学习与科研调试使用，免收申请费。\n2. **直接对接本地效率客户端**：只需在官方界面点击生成一个唯一的 API Key（密钥），将其复制填入主流的完全免费开源工具（如 Cherry Studio、Immersive Translate 沉浸式翻译插件或 Zotero 翻译插件），便能让整个浏览器、或者是个人科研文献一键对照翻译运行，免去第三方抽水和中间代办费用。\n3. **零代码部署自主测试终端**：可以配合开源社区现成的纯前端聊天界面模板，填入您個人的 Key，即可拥有一套适合您个人的纯净提效终端，稳定高效。`;
     }
 
-    if (q.includes("房") || q.includes("日本") || q.includes("空家") || q.includes("免费") || q.includes("民宿")) {
-      return `【AI 置业盘算 · 日本空闲老宅避坑】\n\n网上常有“外国人在日本买乡村超大独栋老修补屋（Akiya）只要几块钱”的夸张报道。这的确是真的，日本少子高龄社会导致大量继承人倒贴转让房产。\n\n但是你一定要预防三大高能隐性黑洞：\n1. **给排水及下水净化槽改造费**：许多老空屋处于乡镇山谷，没有连接现代市政排污管，自行安装合并净化槽的人工施工费可高达 **3万 - 5万人民币**。\n2. **固定资产清算持有税**：虽然房子本身 0 日元，但是每年固都税和清理杂税需要长期向当地役所续缴。\n3. **融入壁垒**：乡村自治社会极为看重邻里除草、扫积雪等社区义务，对不精通日语的外籍人社交极度敏感。\n\n【AI 建议】：如果想开启，务必通过各县官网合规核准的 “Akiya Bank” 直联役所职员，并自学日语到基本日常沟通线，再去实地考察。`;
+    if (q.includes("宿") || q.includes("农场") || q.includes("换宿") || q.includes("义工") || q.includes("大理") || q.includes("旅居") || q.includes("体验")) {
+      return `【图谱解答 · 绿色生态与自愿换宿体验】\n\n若您目前正值面临学期过渡、求职修整、或有心在空档期（Gap Year）体验全新生存视角以缓解焦虑，由 WWOOF 或 YHA 等知名国际绿色组织联合倡导的自愿义工换宿是极具厚度的选择：\n\n1. **基于互惠平等的绿色公益组织**：来自世界各省市与著名美学田园景区（大理、丽水、松阳、清迈等）的大量特色有机农场、手作工艺坊、艺术营馆和精品民宿，长期常态化接收互惠义工。\n2. **生活开销对等互换**：义工不需要交任何报名钱，每天只需要在农田志愿打理、前台接待、协助摄影或者冲煮热饮，平均每日付出合理工时（通常4至5小时），便可自愿对等交换健康的丰盛家常三餐和干净的床位住宿，具体由宿主按合规规则核验落实。\n3. **拓展见识并为职业生涯充电**：在完全免除异地高昂房租的情况下，您既能学习到诸如面包发酵、民宿运营、园艺管护、设计美学等专业技能，还更易结识同频的高校青年、甚至资深大厂离职的设计师跟工程师，碰撞出自主创业和自由开发的合作花火。`;
     }
 
-    return `【AI 领航精算 · 打破规则阶层认知】\n\n世界上只有 1% 的高阶精算玩家，在一边享受高合规的国际套利。因为 **“规则并非不可打破，而是需要看透其底部的运行原理”**。\n\n根据大数据，由于信息壁垒的存在，普通人往往一头扎入黑中介包装的昂贵非法路径中，最后两头落空。其实：\n1. 如果预算只有 2 万：主攻 **德语+德国双元制职业学徒**，零开支带薪登陆欧洲、全家在手艺中立存。\n2. 如果您是远程 IT 开发者：死磕海外英文，直攻 **加拿大 BC Tech PNP 直通车**，或是办一个 **格鲁吉亚 1% 税率自雇号**。\n3. 如果需要身份跳板：带着无犯罪和理财单，直奔官办公署办理 **瓦国/墨国自办直通**，省下昂贵中介溢价。\n\n建议您首先前往本平台的 **【兴趣发现测验】**，输入您持有的能动资金，我们将智能给您匹配出最具操作空间的全球路径！`;
+    return `【图谱解答 · 世界信息差小助手】\n\n通过掌握具有温度的公共、福利、教育及智能提效等资源指南，每位求学者都能以极低的成本，探索和实践更广阔的生命途径，省去不必要的中介或代办开支：\n\n1. 重学求学提效：建议参阅并了解 **【公共资源 知网免费自办】** 或 **【AI工具 API密钥获取】**，让信息工具化繁为简。\n2. 舒缓求职异地住宿压力：通过当地官方小程序合规审办该区域的 **【一二线城市青年人才驿站】** 免费绿色住宿卡，度过起跑线过渡期。\n3. 探索广阔生活形态：可去了解 **【对等换宿生态农场研学】** 和 **【日本乡村 Akiya 计划房屋置产置业移居资讯】** 中游览一番！\n\n建议您首先点击参与我们主页上面的 **【1分钟可能性和偏好事前测验】** 进行模拟匹配！`;
   };
 
   const handleSend = (userText: string) => {
@@ -99,7 +100,7 @@ export const AiAssistant: React.FC = () => {
             <span className="material-symbols-outlined text-[23px] animate-spin">compass_calibration</span>
             <span className="absolute -top-1.5 -right-1 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-primary animate-ping"></span>
           </div>
-          <span className="text-sm font-extrabold pr-1">问问智能自办 AI</span>
+          <span className="text-sm font-extrabold pr-1">问问智能图谱 AI</span>
         </button>
       )}
 
@@ -113,8 +114,8 @@ export const AiAssistant: React.FC = () => {
                 <span className="material-symbols-outlined text-white animate-pulse">compass_calibration</span>
               </div>
               <div>
-                <h3 className="text-sm font-extrabold tracking-wide">AI 领航大盘研判长</h3>
-                <p className="text-[10px] text-primary-fixed/80 font-mono">Sight roads · Agentive Expert</p>
+                <h3 className="text-sm font-extrabold tracking-wide">信息图谱智能向导</h3>
+                <p className="text-[10px] text-primary-fixed/80 font-mono">Sight roads · Helpful Expert</p>
               </div>
             </div>
             
@@ -174,12 +175,12 @@ export const AiAssistant: React.FC = () => {
           </div>
 
           {/* Quick recommendations question buttons board */}
-          <div className="p-3 bg-white border-t border-gray-100 flex flex-nowrap gap-2 overflow-x-auto whitespace-nowrap custom-scrollbar">
+          <div className="p-3 bg-white border-t border-gray-100 flex flex-nowrap gap-2 overflow-x-auto whitespace-nowrap custom-scrollbar overflow-y-hidden">
             {quickQuestions.map((qq, i) => (
               <button
                 key={i}
                 onClick={() => handleSend(qq.q)}
-                className="px-3 py-1.5 bg-gray-100 ring-1 ring-gray-200 hover:ring-primary/20 text-gray-700 hover:text-primary rounded-full text-[11px] font-bold tracking-wide transition-all select-none whitespace-nowrap inline-block shrink-0 cursor-pointer"
+                className="px-3 py-1.5 bg-gray-100 ring-1 ring-gray-200 hover:ring-primary/20 text-gray-700 hover:text-primary rounded-full text-[11px] font-bold tracking-wide transition-all select-none whitespace-nowrap inline-block shrink-0 cursor-pointer text-ellipsis overflow-hidden"
               >
                 {qq.label}
               </button>
@@ -195,7 +196,7 @@ export const AiAssistant: React.FC = () => {
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSend(inputVal);
               }}
-              placeholder="请输入任何你想打破的行业自办自策提问..."
+              placeholder="对图谱有何疑问？如『青年人才驿站』..."
               className="flex-1 bg-gray-50 border border-gray-200 text-xs px-4 py-2.5 rounded-xl focus:outline-hidden focus:border-primary/50 text-text-main font-semibold"
             />
             
