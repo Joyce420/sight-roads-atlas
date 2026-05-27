@@ -3,16 +3,17 @@ import React from "react";
 interface NavbarProps {
   currentView: string;
   onNavigate: (view: string) => void;
+  onOpenAssistant: () => void;
   savedCount: number;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, savedCount }) => {
+export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, onOpenAssistant, savedCount }) => {
   const navItems = [
     { id: "home", label: "首页", icon: "home" },
     { id: "atlas", label: "信息差图谱", icon: "travel_explore" },
-    { id: "discovery", label: "兴趣发现测验", icon: "psychology" },
-    { id: "contribute", label: "贡献信息差", icon: "polyline" },
+    { id: "discovery", label: "探索入口", icon: "explore" },
     { id: "my-map", label: "我的收藏图谱", icon: "map" },
+    { id: "assistant", label: "问问图谱助手", icon: "forum" },
   ];
 
   return (
@@ -47,7 +48,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, savedCo
               return (
                 <button
                   key={item.id}
-                  onClick={() => onNavigate(item.id)}
+                  onClick={() => item.id === "assistant" ? onOpenAssistant() : onNavigate(item.id)}
                   className={`flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${
                     isActive
                       ? "bg-primary text-white shadow-xs"
@@ -97,13 +98,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate, savedCo
             return (
               <button
                 key={item.id}
-                onClick={() => onNavigate(item.id)}
+                onClick={() => item.id === "assistant" ? onOpenAssistant() : onNavigate(item.id)}
                 className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg transition-all ${
                   isActive ? "text-primary scale-110" : "text-gray-500"
                 }`}
               >
                 <span className="material-symbols-outlined text-[22px]">{item.icon}</span>
-                <span className="text-[10px] font-medium">{item.label === "兴趣发现测验" ? "测验" : item.label === "我的收藏图谱" ? "收藏" : item.label}</span>
+              <span className="text-[10px] font-medium">{item.label === "探索入口" ? "探索" : item.label === "我的收藏图谱" ? "收藏" : item.label === "问问图谱助手" ? "助手" : item.label}</span>
               </button>
             );
           })}

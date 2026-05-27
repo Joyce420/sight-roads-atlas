@@ -1,166 +1,97 @@
 import React, { useState, useEffect } from "react";
-import { InformationGap } from "../data";
+import { InformationGap, getSourceStatusLabel, isDemoGap } from "../data";
 
 interface DetailViewProps {
   gapId: string;
   gaps: InformationGap[];
   onBack: () => void;
+  onNavigate?: (view: string) => void;
   savedIds: string[];
   onToggleSave: (id: string, e: React.MouseEvent) => void;
 }
 
-interface Comment {
-  author: string;
-  avatar: string;
+type DetailLink = InformationGap["relatedLinks"][number] & { sourceUrl?: string };
+
+const isValidExternalUrl = (url?: string) => /^https?:\/\//i.test(url || "");
+
+interface CommentEntry {
+  id: string;
+  nickname: string;
   content: string;
-  date: string;
+  createdAt: string;
 }
 
 export const DetailView: React.FC<DetailViewProps> = ({
   gapId,
   gaps,
   onBack,
+  onNavigate,
   savedIds,
   onToggleSave,
 }) => {
   const gap = gaps.find((g) => g.id === gapId) || gaps[0];
+  const [comments, setComments] = useState<CommentEntry[]>([]);
+  const [showAllComments, setShowAllComments] = useState(false);
+  const [expandedCommentIds, setExpandedCommentIds] = useState<string[]>([]);
+  const [saveNotice, setSaveNotice] = useState("");
+  const [commentForm, setCommentForm] = useState({ nickname: "", content: "" });
 
-  // Simulator State
-  const [userCapital, setUserCapital] = useState("");
-  const [userLanguages, setUserLanguages] = useState("English");
-  const [simulationResult, setSimulationResult] = useState<any>(null);
-
-  // Comments State
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newCommentAuthor, setNewCommentAuthor] = useState("");
-  const [newCommentContent, setNewCommentContent] = useState("");
-
-  // Load custom simulation / comments on load
   useEffect(() => {
-    // 1. Initialise mock comments based on pathway
-    const customCommentsKey = `comments_${gap.id}`;
-    const storedComments = localStorage.getItem(customCommentsKey);
-    if (storedComments) {
-      setComments(JSON.parse(storedComments));
-    } else {
-      const defaultComments: Comment[] = [
-        {
-          author: "数字游侠·老高",
-          avatar: "A",
-          content: `这个是真的硬核，之前咨询国内一个知名大中介，张口就要15万人民币，幸亏在这里看到了，自己动手发了几封邮件，真的成了！`,
-          date: "3天前"
-        },
-        {
-          author: "海外避坑达人",
-          avatar: "B",
-          content: `提醒一下，作者写的第三条避坑指南非常准，一定要特别注意当地政策的潜在过渡期，别一时脑热就直接提离职，一定要谋定后动。`,
-          date: "1周前"
-        }
-      ];
-      setComments(defaultComments);
-      localStorage.setItem(customCommentsKey, JSON.stringify(defaultComments));
-    }
-    // Scroll detail to top on navigate
+    const storedComments = localStorage.getItem(`comments_${gap.id}`);
+    setComments(storedComments ? JSON.parse(storedComments) : []);
+    setShowAllComments(false);
+    setExpandedCommentIds([]);
+    setSaveNotice("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [gap.id]);
 
-  const handleSimulate = (e: React.FormEvent) => {
-    e.preventDefault();
-    const capital = parseFloat(userCapital) || 0;
-    
-    let IsEligible = true;
-    let Score = 75;
-    let Feedback = "";
+  const showLocalSaveNotice = () => {
+    setSaveNotice("评论已保存到本机。当前为 V0.1 本地演示版本，内容暂不会公开发布。");
+  };
 
-    // 1. Cost analysis
-    let minNeeded = 0.5; // default 5000元 (0.5w)
-    if (gap.difficulty === "medium") minNeeded = 1.0; // 1w
-    if (gap.difficulty === "high") minNeeded = 5.0; // 5w (e.g. Akiya or international full session)
-
-    // Specific overrides based on specific IDs or categories
-    if (gap.id === "6") {
-      minNeeded = 4.0; // Akiya renovation costs at least 4w for septic system
-    }
-
-    const hasEnoughCapital = capital >= minNeeded;
-
-    // 2. Language requirements
-    const needsLanguage = gap.category === "go_abroad" || gap.category === "see_world" || gap.id === "13";
-    const userHasLanguage = userLanguages === "English" || userLanguages === "Both" || userLanguages === "German";
-
-    // 3. Score weighting
-    if (hasEnoughCapital) {
-      Score += 15;
-    } else {
-      Score -= 25;
-      IsEligible = false;
-    }
-
-    if (needsLanguage) {
-      if (userHasLanguage) {
-        Score += 10;
-      } else {
-        Score -= 15;
-        IsEligible = false;
-      }
-    } else {
-      if (userHasLanguage) Score += 5;
-    }
-
-    Score = Math.min(Math.max(Score, 30), 98);
-
-    // Feedback generation
-    if (IsEligible) {
-      Feedback = `测评匹配度极高！您当前的启动资金（${capital}万）符合该项目“${gap.difficultyLabel}”段位的基础自操开销。`;
-      if (needsLanguage && userHasLanguage) {
-        Feedback += ` 且您的外语优势完美契合该项目的日常查验和对接，建议立即访问官方指引自主申请核验！`;
-      } else {
-        Feedback += ` 建议按部就班按上报步骤实作提交资格认证，省下多余的不透明中介代办费！`;
-      }
-    } else {
-      Feedback = `测评指出潜在的自建自办阻力：`;
-      const reasons = [];
-      if (!hasEnoughCapital) {
-        reasons.push(`启动流动备用预算偏高（该项目预计需约合 ${minNeeded} 万元）`);
-      }
-      if (needsLanguage && !userHasLanguage) {
-        reasons.push(`外语技能不足（该项目自主申报需要较强外语查阅和撰写理解，建议利用翻译工具或自修雅思等重拳备战）`);
-      }
-      Feedback += reasons.join("，且") + `。不建议盲目跟风决策。建议提升个人的对应资质或稳步积攒预算后再行直达官网自办。`;
-    }
-
-    setSimulationResult({
-      score: Score,
-      eligible: IsEligible,
-      feedback: Feedback
-    });
+  const formatCommentTime = (createdAt: string) => {
+    const createdTime = new Date(createdAt).getTime();
+    if (Number.isNaN(createdTime)) return "刚刚";
+    const diffMinutes = Math.floor((Date.now() - createdTime) / 60000);
+    if (diffMinutes < 1) return "刚刚";
+    if (diffMinutes < 60) return `${diffMinutes}分钟前`;
+    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}小时前`;
+    if (diffMinutes < 2880) return "昨天";
+    return `${Math.floor(diffMinutes / 1440)}天前`;
   };
 
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCommentAuthor.trim() || !newCommentContent.trim()) return;
+    if (!commentForm.content.trim()) return;
 
-    const newComment: Comment = {
-      author: newCommentAuthor.trim(),
-      avatar: newCommentAuthor.trim().charAt(0).toUpperCase(),
-      content: newCommentContent.trim(),
-      date: "刚刚"
+    const newComment: CommentEntry = {
+      id: `${Date.now()}`,
+      nickname: commentForm.nickname.trim() || "匿名用户",
+      content: commentForm.content.trim(),
+      createdAt: new Date().toISOString(),
     };
 
     const updatedComments = [newComment, ...comments];
     setComments(updatedComments);
-    setNewCommentAuthor("");
-    setNewCommentContent("");
-
-    // Persistent storage
     localStorage.setItem(`comments_${gap.id}`, JSON.stringify(updatedComments));
+    setCommentForm({ nickname: "", content: "" });
+    showLocalSaveNotice();
+  };
+
+  const toggleCommentExpanded = (id: string) => {
+    setExpandedCommentIds((current) =>
+      current.includes(id) ? current.filter((item) => item !== id) : [...current, id]
+    );
   };
 
   const isSaved = savedIds.includes(gap.id);
+  const detailLinks = gap.relatedLinks as DetailLink[];
+  const validLinks = detailLinks.filter((link) => isValidExternalUrl(link.sourceUrl || link.url));
+  const visibleComments = showAllComments ? comments : comments.slice(0, 3);
+  const sourceStatus = validLinks.length > 0 ? "有来源" : "待补充来源";
 
   return (
     <div className="pb-24 pt-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 animate-fade-in">
-      {/* Back & Breadcrumb Bar */}
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
@@ -173,7 +104,7 @@ export const DetailView: React.FC<DetailViewProps> = ({
         <button
           onClick={(e) => onToggleSave(gap.id, e)}
           className={`flex items-center gap-1.5 px-4 py-2 text-sm font-bold rounded-xl border transition-all ${
-            isSaved 
+            isSaved
               ? "bg-red-50 border-red-200 text-red-600"
               : "bg-white border-gray-200 text-gray-600 hover:text-red-500 hover:bg-red-50/20"
           }`}
@@ -181,22 +112,35 @@ export const DetailView: React.FC<DetailViewProps> = ({
           <span className={`material-symbols-outlined text-[18.5px] ${isSaved ? "fill-current star text-red-500 font-bold" : ""}`}>
             favorite
           </span>
-          <span>{isSaved ? "已保存到我的地图" : "关注保存路线"}</span>
+          <span>{isSaved ? "已收藏" : "收藏"}</span>
         </button>
       </div>
 
-      {/* Main Core Detail Hero Heading Card */}
       <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-6">
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <span className="px-3 py-1 font-bold text-primary bg-primary/5 rounded-xl">
             {gap.categoryLabel}
           </span>
+          <span className={`px-3 py-1 font-bold rounded-xl ${
+            getSourceStatusLabel(gap) === "有来源" ? "text-green-600 bg-green-50" : "text-amber-600 bg-amber-50"
+          }`}>
+            {getSourceStatusLabel(gap)}
+          </span>
+          {isDemoGap(gap) && (
+            <span className="px-3 py-1 font-bold text-gray-500 bg-gray-100 rounded-xl">
+              演示数据
+            </span>
+          )}
           <span className="text-text-muted">·</span>
           <span className="text-gray-600 font-bold">{gap.region}</span>
           <span className="text-text-muted">·</span>
-          <span className="text-text-muted">发布：{gap.date}</span>
+          <span className="text-text-muted">更新时间：{gap.date}</span>
           <span className="text-text-muted">·</span>
-          <span className="text-text-muted">主编：{gap.author}</span>
+          <span className="text-text-muted">{sourceStatus}</span>
+        </div>
+
+        <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-xs md:text-sm text-amber-700 font-bold leading-relaxed">
+          本页用于帮助你理解和核验信息，不构成申请建议或成功承诺。
         </div>
 
         <div className="space-y-3">
@@ -204,7 +148,7 @@ export const DetailView: React.FC<DetailViewProps> = ({
             {gap.title}
           </h1>
           <p className="text-base md:text-lg text-primary font-bold bg-primary/4 p-4 rounded-2xl border-l-[4px] border-primary leading-relaxed">
-            💡 核心亮点：{gap.tagline}
+            这是什么：{gap.tagline}
           </p>
         </div>
 
@@ -212,22 +156,14 @@ export const DetailView: React.FC<DetailViewProps> = ({
           {gap.description}
         </p>
 
-        {/* Objective parameters visual meters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-100">
           <div className="flex items-center gap-4">
             <div className="h-10 w-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center">
-              <span className="material-symbols-outlined text-[22px]">fitness_center</span>
+              <span className="material-symbols-outlined text-[22px]">rule</span>
             </div>
             <div>
-              <div className="text-[11px] text-text-muted font-bold block">获取执行抗力 (难度)</div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-sm text-gray-800">{gap.difficultyLabel}</span>
-                <div className="flex gap-0.5">
-                  <span className={`h-2.5 w-2.5 rounded-full ${gap.difficulty === "low" || gap.difficulty === "medium" || gap.difficulty === "high" ? "bg-amber-500" : "bg-gray-200"}`}></span>
-                  <span className={`h-2.5 w-2.5 rounded-full ${gap.difficulty === "medium" || gap.difficulty === "high" ? "bg-amber-500" : "bg-gray-200"}`}></span>
-                  <span className={`h-2.5 w-2.5 rounded-full ${gap.difficulty === "high" ? "bg-amber-500" : "bg-gray-200"}`}></span>
-                </div>
-              </div>
+              <div className="text-[11px] text-text-muted font-bold block">使用条件/申请条件</div>
+              <div className="font-extrabold text-sm text-gray-800">{gap.difficultyLabel}</div>
             </div>
           </div>
 
@@ -236,9 +172,9 @@ export const DetailView: React.FC<DetailViewProps> = ({
               <span className="material-symbols-outlined text-[22px]">payments</span>
             </div>
             <div>
-              <div className="text-[11px] text-text-muted font-bold block">前置自备资本预算</div>
+              <div className="text-[11px] text-text-muted font-bold block">成本</div>
               <div className="font-extrabold text-sm text-gray-800 line-clamp-1" title={gap.costEstimation}>
-                {gap.costEstimation.split("（")[0]}
+                {gap.costEstimation}
               </div>
             </div>
           </div>
@@ -248,68 +184,72 @@ export const DetailView: React.FC<DetailViewProps> = ({
               <span className="material-symbols-outlined text-[22px]">schedule</span>
             </div>
             <div>
-              <div className="text-[11px] text-text-muted font-bold block">实现转化周期</div>
-              <div className="font-extrabold text-sm text-gray-800">{gap.timeline}</div>
+              <div className="text-[11px] text-text-muted font-bold block">时间窗口</div>
+              <div className="font-extrabold text-sm text-gray-800 line-clamp-2">{gap.timeline}</div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Stereoscopic Contrast Section: Bias vs actual Gap */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* The Bias card */}
-        <div className="bg-orange-50/50 border border-orange-100 rounded-3xl p-6 md:p-8 space-y-4">
-          <div className="flex items-center gap-2 text-orange-600 font-extrabold text-sm">
-            <span className="material-symbols-outlined text-[20px]">cancel</span>
-            <span>传统局限固有认知 (大中介黑箱)</span>
-          </div>
-          <h4 className="text-lg font-extrabold text-gray-800">
-            为什么95%的普通人被蒙在鼓里且花了高昂冤枉钱？
-          </h4>
-          <p className="text-[13px] md:text-sm text-gray-600 leading-relaxed">
-            信息垄断暴利是传统的商业法则。中介故意制造复杂的行文障碍和资质盲点，将原本在国外极其普及、由政府开办和学校直招的免费/小微通道（如双元制、白菜价老屋及领事馆直办的小众白卡）进行层层黑金打包，向不了解跨国法律政策的买家开出动辄 8万、15万 的天价服务费。
-          </p>
-        </div>
-
-        {/* The Real Truth Information Gap card */}
         <div className="bg-sky-50 border border-sky-100 rounded-3xl p-6 md:p-8 space-y-4">
           <div className="flex items-center gap-2 text-primary font-extrabold text-sm">
             <span className="material-symbols-outlined text-[20px]">verified</span>
-            <span>看见更多路底视视角 (真实信息差)</span>
+            <span>为什么值得知道</span>
           </div>
           <h4 className="text-lg font-extrabold text-gray-900">
-            极客玩家如何利用规则直接省下几十万？
+            它可能补上哪类信息盲区
           </h4>
           <p className="text-[13px] md:text-sm text-text-main leading-relaxed">
             {gap.coreGap}
           </p>
         </div>
+
+        <div className="bg-orange-50/50 border border-orange-100 rounded-3xl p-6 md:p-8 space-y-4">
+          <div className="flex items-center gap-2 text-orange-600 font-extrabold text-sm">
+            <span className="material-symbols-outlined text-[20px]">do_not_disturb_on</span>
+            <span>不适合谁盲目跟风</span>
+          </div>
+          <h4 className="text-lg font-extrabold text-gray-800">
+            不建议只凭卡片直接做决定
+          </h4>
+          <p className="text-[13px] md:text-sm text-gray-600 leading-relaxed">
+            如果无法核验官方来源、无法承担成本与时间变化，或只是因为某个路径示例而冲动行动，都不适合盲目跟风。请先把政策状态、地区限制、资格条件和风险边界逐项核对清楚。
+          </p>
+        </div>
       </div>
 
-      {/* Step-by-step Map Implementation Guide */}
+      <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-4">
+        <h3 className="text-lg font-bold text-gray-950 flex items-center gap-1.5">
+          <span className="material-symbols-outlined text-primary text-[22px]">groups</span>
+          <span>适合谁先了解</span>
+        </h3>
+        <p className="text-xs md:text-sm text-text-main leading-relaxed">
+          {gap.appliedTo}
+        </p>
+      </div>
+
       <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-6">
         <div className="space-y-1">
           <h2 className="text-xl font-extrabold text-gray-950 flex items-center gap-1.5">
             <span className="material-symbols-outlined text-primary text-[22px]">route</span>
-            <span>正规自办：核心实操执行步骤图谱</span>
+            <span>使用条件/申请条件</span>
           </h2>
           <p className="text-xs text-text-muted">
-            每一个路径都经过严格论证。请严格遵循官方机构步骤，稳扎稳打完成材料筹备。
+            以下仅作为核验清单与办理路径提示，实际要求以官方页面和当地最新口径为准。
           </p>
         </div>
 
-        {/* Step List Container */}
         <div className="relative border-l-2 border-primary/10 ml-4 pl-6 space-y-8 py-2">
           {gap.practicalSteps.map((step, idx) => (
             <div key={idx} className="relative group">
-              {/* Step indicator dot */}
               <div className="absolute -left-[35px] top-0 h-6.5 w-6.5 bg-primary text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md shadow-primary/20 group-hover:scale-110 transition-transform">
                 {idx + 1}
               </div>
-              
+
               <div className="space-y-1">
                 <h4 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">
-                  第 {idx + 1} 阶段：{step.split("：")[0]}
+                  第 {idx + 1} 项：{step.split("：")[0]}
                 </h4>
                 <p className="text-xs text-text-muted leading-relaxed pl-1">
                   {step.split("：")[1] || step}
@@ -320,192 +260,243 @@ export const DetailView: React.FC<DetailViewProps> = ({
         </div>
       </div>
 
-      {/* True Story Case Scenario */}
       <div className="bg-amber-500/5 border border-amber-500/10 rounded-3xl p-6 md:p-8 space-y-4">
         <div className="flex items-center gap-2 text-amber-600 font-extrabold text-sm">
           <span className="material-symbols-outlined text-[20px]">rate_review</span>
-          <span>素人自办成功案例还原</span>
+          <span>路径示例</span>
         </div>
+        <p className="text-xs text-amber-700 font-bold">
+          以下为演示示例，仅用于说明信息路径，不代表真实人物经历。
+        </p>
         <p className="text-xs md:text-sm text-text-main italic leading-relaxed pl-4 border-l-2 border-amber-500">
-          “ {gap.scenarios} ”
+          {gap.scenarios}
         </p>
       </div>
 
-      {/* Interactive Matchmaking Calculator Simulator */}
-      <div id="calculator-section" className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-6">
+      <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-6">
         <div className="space-y-1">
           <h3 className="text-lg font-bold text-gray-950 flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-primary text-[22px]">calculate</span>
-            <span>模拟自测：我符合该路径的通关率吗？</span>
+            <span className="material-symbols-outlined text-primary text-[22px]">checklist</span>
+            <span>了解清单</span>
           </h3>
           <p className="text-xs text-text-muted">
-            输入你的简单背景数据，系统将根据本路径客观参数（资金要求、语言瓶颈）计算通过概率并提供个性化通盘避坑建议。
+            这里不判断你是否适合，只列出需要自行核对的条件。
           </p>
         </div>
 
-        <form onSubmit={handleSimulate} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end bg-gray-50/50 p-5 rounded-2xl border border-gray-100/60">
-          {/* User budget capital input */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700 block">💰 预计首期备用启动金 (万元)</label>
-            <input
-              type="number"
-              value={userCapital}
-              onChange={(e) => setUserCapital(e.target.value)}
-              placeholder="如：5 （表示 5 万人民币）"
-              step="any"
-              required
-              className="w-full text-xs font-semibold px-3 py-2 border border-gray-200 bg-white rounded-xl focus:outline-hidden focus:border-primary/50"
-            />
-          </div>
-
-          {/* User major foreign language dropdown */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700 block">🗣️ 你当前的外语优势</label>
-            <select
-              value={userLanguages}
-              onChange={(e) => setUserLanguages(e.target.value)}
-              className="w-full text-xs font-semibold px-3 py-2 border border-gray-200 bg-white rounded-xl focus:outline-hidden focus:border-primary/50"
-            >
-              <option value="English">良好的英语水平 (雅思 6 分左右或以上)</option>
-              <option value="Both">精通英文 + 同时自学/掌握意向小语种</option>
-              <option value="German">掌握德语 (日常日常工作交流 B1/B2)</option>
-              <option value="None">外语尚在极速死磕或零基础状态</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-primary hover:bg-primary-container text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-md shadow-primary/10 transition-all select-none"
-          >
-            开始模拟资格测评
-          </button>
-        </form>
-
-        {/* Simulator Outcome Display Card */}
-        {simulationResult && (
-          <div className="p-5 rounded-2xl border flex flex-col md:flex-row items-center gap-5 slide-in" style={{
-            backgroundColor: simulationResult.eligible ? "rgba(16, 185, 129, 0.04)" : "rgba(245, 158, 11, 0.04)",
-            borderColor: simulationResult.eligible ? "rgba(16, 185, 129, 0.15)" : "rgba(245, 158, 11, 0.15)"
-          }}>
-            <div className="relative h-18 w-18 flex items-center justify-center rounded-full border-4 font-extrabold text-xl font-mono shrink-0 select-none shadow-inner" style={{
-              color: simulationResult.eligible ? "#10B981" : "#F59E0B",
-              borderColor: simulationResult.eligible ? "#10B981" : "#F59E0B"
-            }}>
-              {simulationResult.score}%
-              <div className="text-[8px] absolute bottom-1 font-bold">精准分值</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[
+            ["身份/年龄限制", gap.appliedTo],
+            ["地区限制", gap.region],
+            ["成本", gap.costEstimation],
+            ["时间窗口", gap.timeline],
+            ["官方来源", sourceStatus],
+            ["风险提示", gap.risksAndWarmings],
+          ].map(([label, value]) => (
+            <div key={label} className="p-4 rounded-2xl bg-gray-50/70 border border-gray-100 space-y-1">
+              <div className="text-[11px] font-bold text-gray-500">{label}</div>
+              <p className="text-xs text-text-main leading-relaxed line-clamp-3">{value}</p>
             </div>
-
-            <div className="space-y-1.5 flex-1">
-              <div className="flex items-center gap-1.5">
-                <span className={`text-sm font-extrabold ${simulationResult.eligible ? 'text-green-600' : 'text-amber-600'}`}>
-                  {simulationResult.eligible ? "符合资质 · 随时开启！" : "有待完善 · 稳步绸缪"}
-                </span>
-                <span className="text-[10px] bg-white border border-gray-200 rounded-md px-1.5 py-0.5 text-text-muted">
-                  极客推演意见
-                </span>
-              </div>
-              <p className="text-xs text-text-main leading-relaxed">
-                {simulationResult.feedback}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Official Links Registry */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-4">
-        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider block">
-          🔗 官方政策、规费与直接申请渠道汇总
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {gap.relatedLinks.map((link, idx) => (
-            <a
-              key={idx}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between p-3.5 rounded-xl border border-gray-100 bg-gray-50 hover:bg-primary/5 hover:border-primary/20 hover:text-primary transition-all group"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="material-symbols-outlined text-gray-400 group-hover:text-primary text-xl">language</span>
-                <span className="text-xs font-bold text-gray-800 group-hover:text-primary line-clamp-1">{link.title}</span>
-              </div>
-              <span className="material-symbols-outlined text-[15px] text-gray-400 group-hover:translate-x-1 transition-transform">open_in_new</span>
-            </a>
           ))}
         </div>
       </div>
 
-      {/* Warnings & Risk Controls */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-3">
+          <h3 className="text-lg font-bold text-gray-950 flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-primary text-[22px]">payments</span>
+            <span>成本与时间</span>
+          </h3>
+          <p className="text-xs md:text-sm text-text-main leading-relaxed">成本：{gap.costEstimation}</p>
+          <p className="text-xs md:text-sm text-text-main leading-relaxed">时间：{gap.timeline}</p>
+        </div>
+
+        <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-3">
+          <h3 className="text-lg font-bold text-gray-950 flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-primary text-[22px]">update</span>
+            <span>更新时间</span>
+          </h3>
+          <p className="text-xs md:text-sm text-text-main leading-relaxed">{gap.date}</p>
+          <p className="text-xs text-text-muted">
+            V0.1 阶段仅展示有限演示数据，信息变化请以官方来源为准。
+          </p>
+        </div>
+      </div>
+
       <div className="bg-red-50 border border-red-100 rounded-3xl p-6 md:p-8 space-y-3">
         <div className="flex items-center gap-2 text-red-600 font-extrabold text-sm">
           <span className="material-symbols-outlined text-[20px]">warning</span>
-          <span>⚠️ 避坑红线及地缘硬核警示</span>
+          <span>风险与误区</span>
         </div>
-        <p className="text-xs md:text-sm text-red-700 leading-relaxed leading-relaxed pl-1">
+        <p className="text-xs md:text-sm text-red-700 leading-relaxed pl-1">
           {gap.risksAndWarmings}
         </p>
       </div>
 
-      {/* Comments section */}
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-6">
-        <h3 className="text-lg font-bold text-gray-950 flex items-center gap-1.5">
-          <span className="material-symbols-outlined text-primary text-[22px]">forum</span>
-          <span>共享研判评论 ({comments.length})</span>
+      <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-4">
+        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider block">
+          🔗 官方来源/待补充来源
         </h3>
+        {detailLinks.length === 0 ? (
+          <button
+            type="button"
+            disabled
+            className="flex items-center justify-between p-3.5 rounded-xl border border-gray-100 bg-gray-100 text-gray-400 cursor-not-allowed w-full"
+          >
+            <span className="text-xs font-bold">待补充来源</span>
+            <span className="material-symbols-outlined text-[15px]">link_off</span>
+          </button>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {detailLinks.map((link, idx) => {
+              const sourceUrl = link.sourceUrl || link.url;
+              const isValid = isValidExternalUrl(sourceUrl);
 
-        {/* Comment input form */}
-        <form onSubmit={handleAddComment} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              return isValid ? (
+                <a
+                  key={idx}
+                  href={sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-3.5 rounded-xl border border-gray-100 bg-gray-50 hover:bg-primary/5 hover:border-primary/20 hover:text-primary transition-all group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <span className="material-symbols-outlined text-gray-400 group-hover:text-primary text-xl">language</span>
+                    <span className="text-xs font-bold text-gray-800 group-hover:text-primary line-clamp-1">{link.title}</span>
+                  </div>
+                  <span className="material-symbols-outlined text-[15px] text-gray-400 group-hover:translate-x-1 transition-transform">open_in_new</span>
+                </a>
+              ) : (
+                <button
+                  key={idx}
+                  type="button"
+                  disabled
+                  className="flex items-center justify-between p-3.5 rounded-xl border border-gray-100 bg-gray-100 text-gray-400 cursor-not-allowed"
+                >
+                  <span className="text-xs font-bold">{link.title || "待补充来源"}</span>
+                  <span className="material-symbols-outlined text-[15px]">link_off</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <div className="text-center">
+        <button
+          type="button"
+          onClick={() => onNavigate?.("contribute")}
+          className="text-xs font-bold text-text-muted hover:text-primary transition-colors"
+        >
+          发现错误？投稿或纠错
+        </button>
+      </div>
+
+      <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-6">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+          <div className="space-y-1">
+            <h3 className="text-lg font-bold text-gray-950 flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-primary text-[22px]">forum</span>
+              <span>评论区</span>
+            </h3>
+            <p className="text-xs md:text-sm text-text-muted leading-relaxed">
+              看过、用过、申请过的人可以分享经历；还不清楚的人也可以直接提问。
+            </p>
+          </div>
+          <span className="text-xs font-bold text-text-muted bg-gray-50 border border-gray-100 px-3 py-1.5 rounded-xl">
+            评论 {comments.length} 条
+          </span>
+        </div>
+
+        {saveNotice && (
+          <div className="rounded-2xl bg-green-50 border border-green-100 p-4 text-xs md:text-sm text-green-700 font-bold">
+            {saveNotice}
+          </div>
+        )}
+
+        <form onSubmit={handleAddComment} className="space-y-4 bg-gray-50/50 p-5 rounded-2xl border border-gray-100/60">
+          <div className="grid grid-cols-1 md:grid-cols-[180px_1fr] gap-4">
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-gray-500">研判人昵称</label>
+              <label className="text-[11px] font-bold text-gray-500">昵称（可选）</label>
               <input
                 type="text"
-                value={newCommentAuthor}
-                onChange={(e) => setNewCommentAuthor(e.target.value)}
-                placeholder="例如：数字游民·小李"
-                required
+                value={commentForm.nickname}
+                onChange={(e) => setCommentForm({ ...commentForm, nickname: e.target.value })}
+                placeholder="匿名用户"
                 className="w-full text-xs font-semibold px-3.5 py-2.5 border border-gray-200 rounded-xl focus:outline-hidden focus:border-primary/50 text-gray-800"
               />
             </div>
-          </div>
-          <div className="space-y-1">
-            <label className="text-[11px] font-bold text-gray-500">研判见解与实操反馈</label>
-            <textarea
-              value={newCommentContent}
-              onChange={(e) => setNewCommentContent(e.target.value)}
-              placeholder="写下您亲自踏勘或咨询该项目的真实体验、最新官方规费调整，帮助更多同行者..."
-              required
-              rows={3}
-              className="w-full text-xs font-semibold p-3.5 border border-gray-200 rounded-xl focus:outline-hidden focus:border-primary/50 text-gray-800"
-            ></textarea>
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-gray-500">评论内容</label>
+              <textarea
+                value={commentForm.content}
+                onChange={(e) => setCommentForm({ ...commentForm, content: e.target.value })}
+                placeholder="写下你的经历、问题或提醒，例如：我申请过这个项目，实际需要…… / 大专生能不能申请？"
+                required
+                rows={3}
+                className="w-full text-xs font-semibold p-3.5 border border-gray-200 rounded-xl focus:outline-hidden focus:border-primary/50 text-gray-800"
+              />
+            </div>
           </div>
           <button
             type="submit"
             className="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-container text-white text-xs font-bold transition-all shadow-md shadow-primary/10 select-none cursor-pointer"
           >
-            发表共享研判看法
+            发布评论
           </button>
         </form>
 
-        {/* Comment lists */}
-        <div className="pt-4 border-t border-gray-100 space-y-6">
-          {comments.map((comment, idx) => (
-            <div key={idx} className="flex gap-4 items-start pb-4 border-b border-gray-50 last:border-0 last:pb-0">
-              <div className="h-9 w-9 rounded-full bg-primary/8 text-primary font-bold text-sm flex items-center justify-center shrink-0">
-                {comment.avatar}
-              </div>
-              <div className="space-y-1.5 flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-gray-800">{comment.author}</span>
-                  <span className="text-[10px] text-text-muted font-mono">{comment.date}</span>
+        <div className="pt-4 border-t border-gray-100 space-y-4">
+          {visibleComments.length === 0 ? (
+            <p className="text-xs md:text-sm text-text-muted leading-relaxed bg-gray-50 rounded-2xl border border-gray-100 p-4">
+              暂无评论。你可以第一个补充经历、提问或提醒别人避坑。
+            </p>
+          ) : (
+            visibleComments.map((item) => {
+              const isExpanded = expandedCommentIds.includes(item.id);
+              const canExpand = item.content.length > 110;
+              const avatarText = item.nickname.slice(0, 1).toUpperCase() || "匿";
+
+              return (
+                <div key={item.id} className="p-4 rounded-2xl border border-gray-100 bg-gray-50/40 flex gap-3">
+                  <div className="h-9 w-9 rounded-full bg-primary/8 text-primary flex items-center justify-center text-xs font-extrabold shrink-0">
+                    {avatarText}
+                  </div>
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-extrabold text-gray-900">{item.nickname}</span>
+                      <span className="text-[10px] text-text-muted font-mono">{formatCommentTime(item.createdAt)}</span>
+                    </div>
+                    <p className={`text-xs md:text-sm text-text-main leading-relaxed whitespace-pre-line ${isExpanded ? "" : "line-clamp-3"}`}>
+                      {item.content}
+                    </p>
+                    {canExpand && (
+                      <button
+                        type="button"
+                        onClick={() => toggleCommentExpanded(item.id)}
+                        className="text-[11px] font-bold text-primary hover:text-primary-container"
+                      >
+                        {isExpanded ? "收起全文" : "展开全文"}
+                      </button>
+                    )}
+                    <div className="flex items-center gap-4 text-[11px] text-text-muted font-bold">
+                      <button type="button" className="hover:text-primary transition-colors">回复</button>
+                      <button type="button" className="hover:text-primary transition-colors">有用</button>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xs text-text-main leading-relaxed">
-                  {comment.content}
-                </p>
-              </div>
-            </div>
-          ))}
+              );
+            })
+          )}
+          {comments.length > 3 && (
+            <button
+              type="button"
+              onClick={() => setShowAllComments((value) => !value)}
+              className="w-full py-2.5 px-4 rounded-xl border border-gray-200 text-gray-700 text-xs font-bold hover:border-primary/30 hover:text-primary transition-all"
+            >
+              {showAllComments ? "收起评论" : "查看全部评论"}
+            </button>
+          )}
         </div>
       </div>
     </div>

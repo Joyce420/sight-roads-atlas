@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { InformationGap, CATEGORIES } from "../data";
+import { InformationGap, CATEGORIES, getSourceStatusLabel, isDemoGap } from "../data";
 
 interface HomeViewProps {
   gaps: InformationGap[];
@@ -30,7 +30,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   const hotTags = [
     { label: "免费文献查阅", query: "知网" },
     { label: "青年免费驿站", query: "驿站" },
-    { label: "AI提效大模型", query: "AI" },
+    { label: "AI工具来源", query: "AI" },
     { label: "日本空村老宅", query: "日本" },
     { label: "二级双通道报销", query: "双通道" },
   ];
@@ -45,7 +45,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
         <div className="text-center max-w-4xl mx-auto px-4 space-y-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/8 text-primary border border-primary/20 text-xs font-semibold animate-bounce">
             <span className="material-symbols-outlined text-[14px]">insights</span>
-            <span>打破世界信息差 · 汇聚成长探索路径</span>
+            <span>可信信息卡片库 · 信息核验入口</span>
           </div>
           
           <h1 className="text-3.5xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-tight">
@@ -54,6 +54,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
           
           <p className="text-base md:text-lg text-text-muted max-w-2xl mx-auto">
             我们整理普通人可能不知道的权益、资源、工具、项目、优惠、政策和生活方式，把它们变成看得懂的信息卡片。
+          </p>
+          <p className="text-sm text-text-muted max-w-3xl mx-auto leading-relaxed">
+            这里不是中介平台，也不替你做决定。我们只是把分散在世界各地的机会、权益、资源、工具、项目、政策和生活方式整理成信息卡片，方便你查阅、比较和学习。
+          </p>
+          <p className="text-xs text-primary font-bold">
+            当前为 V0.1 演示版本，内容仍在持续核验和扩展。
           </p>
 
           {/* Search Box */}
@@ -93,10 +99,40 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
+      {/* How to use */}
+      <section className="max-w-7xl mx-auto px-4">
+        <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-5">
+          <div className="space-y-1 text-center md:text-left">
+            <h2 className="text-2xl font-bold text-gray-900">这个网站怎么用</h2>
+            <p className="text-sm text-text-muted">
+              把它当成一个信息卡片库和核验入口，而不是替你做决定的工具。
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              ["search", "搜索或浏览信息卡片"],
+              ["fact_check", "查看条件、成本、风险和来源"],
+              ["favorite", "收藏到我的图谱"],
+              ["forum", "在评论区交流经验和问题"],
+            ].map(([icon, text], idx) => (
+              <div key={text} className="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex items-start gap-3">
+                <div className="h-9 w-9 rounded-xl bg-primary/5 text-primary flex items-center justify-center shrink-0">
+                  <span className="material-symbols-outlined text-[20px]">{icon}</span>
+                </div>
+                <div>
+                  <div className="text-[11px] text-text-muted font-mono font-bold">STEP {idx + 1}</div>
+                  <div className="text-sm font-bold text-gray-900 mt-0.5">{text}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Analytics Insight Widgets */}
       <section className="max-w-7xl mx-auto px-4">
         <h2 className="text-sm font-bold text-gray-400 tracking-widest uppercase mb-4 text-center md:text-left">
-          📊 核心智囊数据分析面板
+          信息卡片概览
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-100/60 hover:shadow-md transition-all">
@@ -114,14 +150,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
           <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-150 hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-muted text-sm font-medium">智慧 AI 生产力提效</span>
+              <span className="text-text-muted text-sm font-medium">AI 工具与效率资源</span>
               <div className="h-8 w-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">precision_manufacturing</span>
               </div>
             </div>
             <div className="text-2xl font-bold text-gray-900">官方 API 密钥</div>
             <div className="text-xs text-indigo-600 font-semibold mt-1 flex items-center gap-0.5">
-              <span>善用自带免费额度，实现安全降本</span>
+              <span>核验官方入口、额度与使用限制</span>
             </div>
           </div>
 
@@ -140,14 +176,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
           <div className="bg-white rounded-2xl p-6 shadow-xs border border-gray-150 hover:shadow-md transition-all">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-text-muted text-sm font-medium">精选探索成长路径</span>
+              <span className="text-text-muted text-sm font-medium">当前收录规模</span>
               <div className="h-8 w-8 rounded-lg bg-primary/5 text-primary flex items-center justify-center">
                 <span className="material-symbols-outlined text-[20px]">hub</span>
               </div>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{gaps.length + 32} 条实践数</div>
+            <div className="text-2xl font-bold text-gray-900">{gaps.length} 条卡片</div>
             <div className="text-xs text-primary font-semibold mt-1 flex items-center gap-0.5">
-              <span>大门类 100% 免费公开，随时自主查阅</span>
+              <span>V0.1 演示数据，持续核验扩展</span>
             </div>
           </div>
         </div>
@@ -157,8 +193,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <section className="bg-white py-12 border-y border-gray-100">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center max-w-2xl mx-auto mb-8 space-y-2">
-            <h2 className="text-2.5xl font-bold text-gray-900">十二大成长探索领域</h2>
-            <p className="text-text-muted text-sm">选择适合您当前生活拼图的突破视角，进入细分图谱深入盘点</p>
+            <h2 className="text-2.5xl font-bold text-gray-900">按方向浏览信息</h2>
+            <p className="text-text-muted text-sm">选择你感兴趣的方向，进入图谱继续搜索、比较与核验。</p>
           </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12 gap-3">
@@ -185,14 +221,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <section className="max-w-7xl mx-auto px-4 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div className="space-y-1 text-center sm:text-left">
-            <div className="text-xs text-primary font-bold tracking-widest uppercase">FEATURED PATHWAYS</div>
-            <h2 className="text-2.5xl font-bold text-gray-900">本周高分推荐·硬核路线</h2>
+            <div className="text-xs text-primary font-bold tracking-widest uppercase">FEATURED CARDS</div>
+            <h2 className="text-2.5xl font-bold text-gray-900">精选信息卡片</h2>
           </div>
           <button
             onClick={() => onNavigate("atlas")}
             className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-gray-200 text-gray-700 hover:text-white hover:bg-primary font-medium text-sm transition-all hover:border-primary"
           >
-            <span>探索完整信息差图谱</span>
+            <span>浏览完整信息图谱</span>
             <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
           </button>
         </div>
@@ -206,9 +242,21 @@ export const HomeView: React.FC<HomeViewProps> = ({
             >
               {/* Card Badge Header */}
               <div className="p-6 pb-0 flex items-start justify-between">
-                <span className="px-2.5 py-1 rounded-lg bg-primary/5 text-primary text-xs font-semibold">
-                  {gap.categoryLabel}
-                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="px-2.5 py-1 rounded-lg bg-primary/5 text-primary text-xs font-semibold">
+                    {gap.categoryLabel}
+                  </span>
+                  <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${
+                    getSourceStatusLabel(gap) === "有来源" ? "bg-green-50 text-green-600" : "bg-amber-50 text-amber-600"
+                  }`}>
+                    {getSourceStatusLabel(gap)}
+                  </span>
+                  {isDemoGap(gap) && (
+                    <span className="px-2.5 py-1 rounded-lg bg-gray-100 text-gray-500 text-xs font-semibold">
+                      演示数据
+                    </span>
+                  )}
+                </div>
                 
                 <button
                   onClick={(e) => onToggleSave(gap.id, e)}
@@ -251,16 +299,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 </p>
               </div>
 
-              {/* Card Footer */}
-              <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100/60 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1 bg-amber-500/8 text-amber-600 border border-amber-500/15 px-2 py-0.5 rounded-md font-bold">
-                  <span className="material-symbols-outlined text-[14px]">star</span>
-                  <span>{gap.rating.toFixed(1)} 推荐分</span>
-                </div>
-                <div className="flex items-center gap-3 text-text-muted font-mono">
-                  <span>⚓️ {gap.stars + (savedIds.includes(gap.id) ? 1 : 0)} 关注</span>
-                  <span>👁️ {gap.views} 阅</span>
-                </div>
+              <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100/60 flex items-center justify-between text-xs text-text-muted font-bold">
+                <span>{gap.region}</span>
+                <span>更新时间：{gap.date}</span>
               </div>
             </div>
           ))}
@@ -277,13 +318,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div className="space-y-4 max-w-xl text-center md:text-left z-10">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 text-primary border border-primary/20 text-xs font-semibold">
               <span className="material-symbols-outlined text-[14px]">psychology</span>
-              <span>1分钟成长可能性格匹配测试</span>
+              <span>探索入口</span>
             </div>
             <h3 className="text-2xl md:text-3xl font-extrabold text-gray-900">
-              探寻属于您的多元成长出口
+              从感兴趣的信息方向开始
             </h3>
             <p className="text-sm text-text-muted leading-relaxed">
-              根据您当前的资源权重（背景专长、可用时间预算、个人成长偏好），AI图谱能够智能推荐出最契合您落地发掘的那套高性价比公共与学习方案！
+              选择权益福利、公共资源、城市机会、AI工具等方向，先查看相关信息卡片，再进入详情页核验来源、条件与风险。
             </p>
           </div>
 
@@ -291,7 +332,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             onClick={() => onNavigate("discovery")}
             className="px-8 py-4 rounded-xl bg-primary hover:bg-primary-container text-white font-bold text-base transition-all shadow-lg shadow-primary/20 select-none z-10 whitespace-nowrap cursor-pointer"
           >
-            开始匹配我的成长方案 ⚡️
+            进入探索入口
           </button>
         </div>
       </section>
@@ -323,9 +364,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="h-10 w-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-lg shadow-xs">
               03
             </div>
-            <h4 className="font-bold text-gray-900">开放连接·青年共享</h4>
+            <h4 className="font-bold text-gray-900">交流经验·补充疑问</h4>
             <p className="text-xs text-text-muted leading-relaxed">
-              信息本无界，人生多可能。你分享出的真实实践历程就是他人前行的一盏明灯。一起参与，丰富图谱生态。
+              详情页保留普通评论区，方便看过、用过、申请过的人分享经历，也方便还不清楚的人提出想核验的问题。
             </p>
           </div>
         </div>

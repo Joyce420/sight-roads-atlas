@@ -1,5 +1,5 @@
 import React from "react";
-import { InformationGap } from "../data";
+import { InformationGap, getSourceStatusLabel, isDemoGap } from "../data";
 
 interface MyMapViewProps {
   gaps: InformationGap[];
@@ -26,7 +26,7 @@ export const MyMapView: React.FC<MyMapViewProps> = ({
       id: "national",
       name: "全局数字公共线 (National Online Link)",
       region: "全国/线上",
-      desc: "包含全国公立图书馆免费免押畅读知网文献、免费搭建专属 AI 智能助理及大病特药双通道补助政策。",
+      desc: "包含全国公立图书馆免费免押畅读知网文献、AI 工具官方入口及大病特药双通道补助政策。",
       icon: "cloud_sync"
     },
     {
@@ -69,13 +69,13 @@ export const MyMapView: React.FC<MyMapViewProps> = ({
     },
     {
       title: "理性分析行者 (The Analyst)",
-      desc: "在发掘测验中进行了专属背景建模匹配",
+      desc: "使用探索入口浏览过感兴趣的信息方向",
       unlocked: true,
       icon: "monitoring"
     },
     {
-      title: "无私点灯使者 (The Pathfinder)",
-      desc: "自主在共享板块编写并上报了至少 1 项真实信息差",
+      title: "线索补充者 (The Pathfinder)",
+      desc: "通过投稿 / 纠错入口在本机保存过至少 1 条补充线索",
       unlocked: contributionCount >= 1,
       icon: "campaign"
     }
@@ -90,21 +90,23 @@ export const MyMapView: React.FC<MyMapViewProps> = ({
           <span>我的信息差图谱分析</span>
         </h1>
         <p className="text-sm text-text-muted">
-          通过您收藏和关注的各方向项目，系统已智能帮您归纳测算并激活对应的生活发展方向。
+          这里仅整理你收藏过的信息卡片，方便之后继续查阅、比较和核验。
+        </p>
+        <p className="text-xs text-primary font-bold">
+          当前为本地收藏模式，数据仅保存在你的浏览器中。清除缓存或更换设备后可能丢失。
         </p>
       </div>
 
-      {/* Connection Hub Radar Panel */}
       <div className="bg-white rounded-3xl border border-gray-100 p-6 md:p-8 shadow-xs space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h2 className="text-base font-extrabold text-gray-900 flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-xl animate-pulse">radar</span>
-            <span>成长路径雷达中心 (Growth Path Radar)</span>
+            <span>收藏方向概览</span>
           </h2>
           <div className="flex items-center gap-1.5 text-xs font-bold text-text-muted font-mono bg-gray-50 px-3 py-1.5 rounded-lg border">
-            <span>数据连接状态：</span>
+            <span>本地收藏状态：</span>
             <span className="h-2 w-2 rounded-full bg-green-500 animate-ping"></span>
-            <span className="text-green-600">全国公共通道就绪</span>
+            <span className="text-green-600">浏览器本地保存</span>
           </div>
         </div>
 
@@ -152,9 +154,9 @@ export const MyMapView: React.FC<MyMapViewProps> = ({
 
                 <div className="pt-3 border-t border-gray-100 mt-4 text-[10.5px] font-bold text-gray-600">
                   {isActivated ? (
-                    <span className="text-primary font-bold">已连接 {matchesCount} 项路径</span>
+                    <span className="text-primary font-bold">已收藏 {matchesCount} 张卡片</span>
                   ) : (
-                    <span className="text-gray-400">收藏对应区域项目解锁</span>
+                    <span className="text-gray-400">收藏相关卡片后显示</span>
                   )}
                 </div>
               </div>
@@ -168,7 +170,7 @@ export const MyMapView: React.FC<MyMapViewProps> = ({
         <div className="bg-white rounded-3xl border border-gray-100 p-6 md:p-8 shadow-xs space-y-6 h-fit">
           <h2 className="text-base font-extrabold text-gray-900 flex items-center gap-1.5">
             <span className="material-symbols-outlined text-primary text-xl">workspace_premium</span>
-            <span>我的图谱精算成就</span>
+            <span>我的收藏状态</span>
           </h2>
 
           <div className="space-y-4">
@@ -223,6 +225,16 @@ export const MyMapView: React.FC<MyMapViewProps> = ({
                       <span className="text-primary font-bold px-1.5 py-0.5 bg-primary/5 rounded-md uppercase">
                         {item.categoryLabel}
                       </span>
+                      <span className={`font-bold px-1.5 py-0.5 rounded-md ${
+                        getSourceStatusLabel(item) === "有来源" ? "bg-green-50 text-green-600" : "bg-amber-50 text-amber-600"
+                      }`}>
+                        {getSourceStatusLabel(item)}
+                      </span>
+                      {isDemoGap(item) && (
+                        <span className="font-bold px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded-md">
+                          演示数据
+                        </span>
+                      )}
                       <span className="text-gray-500 font-medium">📍 {item.region}</span>
                       <span className="text-text-muted font-mono">难度: {item.difficultyLabel}</span>
                     </div>

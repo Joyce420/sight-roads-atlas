@@ -11,7 +11,6 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
   const [category, setCategory] = useState<any>("welfare");
   const [region, setRegion] = useState("全国/线上");
   const [difficulty, setDifficulty] = useState<any>("low");
-  const [rating, setRating] = useState(4);
   const [tagline, setTagline] = useState("");
   const [description, setDescription] = useState("");
   const [coreGap, setCoreGap] = useState("");
@@ -32,6 +31,7 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
   
   // Submit state triggers
   const [isSuccess, setIsSuccess] = useState(false);
+  const [validationError, setValidationError] = useState("");
 
   const handleAddStep = () => {
     setSteps([...steps, ""]);
@@ -54,13 +54,14 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
 
     // Basic Validation
     if (title.trim().length < 4) {
-      alert("信息差项目名称需要至少包含 4 个字。");
+      setValidationError("信息差项目名称需要至少包含 4 个字。");
       return;
     }
     if (tagline.trim().length < 8) {
-      alert("信息差亮点需要至少包含 8 个字。");
+      setValidationError("信息差亮点需要至少包含 8 个字。");
       return;
     }
+    setValidationError("");
 
     // Format categoryLabel
     const catLabelMap: { [key: string]: string } = {
@@ -98,7 +99,7 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
       region,
       difficulty,
       difficultyLabel: diffLabelMap[difficulty] || "简单",
-      rating,
+      rating: 0,
       tagline: tagline.trim(),
       description: description.trim() || `${title}的全套信息差自建自办方案。`,
       coreGap: coreGap.trim() || "许多人因信息闭塞常支付过高代理服务费。事实上，通过官方公布流程自主申请，公开、安全、且大部分不设额外手续费用。",
@@ -106,13 +107,13 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
       costEstimation: costEstimation.trim() || "官方自办通常免费，仅需自负路费与简单工本复核款",
       timeline: timeline.trim() || "自主填备并提交（1-5分钟） + 官方复核（3-10个工作日）",
       practicalSteps: filteredSteps,
-      relatedLinks: linkTitle1.trim() && linkUrl1.trim() ? [{ title: linkTitle1.trim(), url: linkUrl1.trim() }] : [{ title: "地方一网通办及官方保障服务入口", url: "https://www.gov.cn" }],
-      scenarios: scenarios.trim() || `市民小李（化名），之前不知道能够线上免费申办此福利。阅读信息差指引后，自己线上直达国家认证窗口，足不出户便顺利办成了全部资质、省去了中介代办开销。`,
+      relatedLinks: linkTitle1.trim() && linkUrl1.trim() ? [{ title: linkTitle1.trim(), sourceUrl: linkUrl1.trim() }] : [],
+      scenarios: scenarios.trim() || "示例：先记录该线索的适用人群、地区限制、成本、时间窗口与官方来源，再逐项核验政策是否仍然有效。不要把单一卡片当成结论。",
       risksAndWarmings: risksAndWarmings.trim() || "1. 必须绝对保证申请材料真实、合规，禁止弄虚作假。 2. 部分补助具有区域及限时限额，请申请前向有关官方热线咨询核定。",
-      author: "独立贡献家",
+      author: "本机投稿",
       date: new Date().toISOString().split("T")[0],
-      views: 120,
-      stars: 8
+      views: 0,
+      stars: 0
     };
 
     onAddGap(newGap);
@@ -126,14 +127,13 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
 
   return (
     <div className="pb-24 pt-6 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 animate-fade-in">
-      {/* Title */}
       <div className="space-y-1 text-center md:text-left">
         <h1 className="text-3xl font-extrabold tracking-tight text-gray-950 flex items-center justify-center md:justify-start gap-2">
           <span className="material-symbols-outlined text-primary text-3xl">polyline</span>
-          <span>共享世界信息差！加入贡献序列</span>
+          <span>投稿 / 纠错</span>
         </h1>
         <p className="text-sm text-text-muted">
-          发现并共享您实际体验或自检成功的公共权益、福利资源、官方补贴、实用AI工具、免费职业体验及极简生活方式。
+          如果你发现信息错误、来源变更，或想补充新的公开来源，可以在这里提交本地记录。
         </p>
       </div>
 
@@ -143,25 +143,30 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
           <div className="h-20 w-20 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
             <span className="material-symbols-outlined text-5xl">check_box</span>
           </div>
-          <h2 className="text-2xl font-extrabold text-gray-950">共享发布成功！</h2>
+          <h2 className="text-2xl font-extrabold text-gray-950">已保存到本机</h2>
           <p className="text-xs md:text-sm text-text-muted leading-relaxed">
-            感谢您！您贡献的高能信息差已汇入世界信息差图谱底层数据库中。系统已自动在极客板块进行了加盖公示，现在去“信息差图谱”中就能赫然筛选查看到它啦！
+            当前提交内容仅保存在本机，暂不会公开发布。正式公开前需要人工核验。
           </p>
           <div className="pt-2">
             <button
               onClick={handleGoToAtlas}
               className="px-8 py-3.5 rounded-xl bg-primary hover:bg-primary-container text-white font-bold text-sm shadow-md shadow-primary/10 transition-all select-none cursor-pointer"
             >
-              去图谱里检索我的项目 ⚡️
+              去信息图谱查看
             </button>
           </div>
         </div>
       ) : (
         /* Form Dashboard */
         <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xs space-y-6">
+          {validationError && (
+            <div className="rounded-2xl bg-amber-50 border border-amber-100 p-4 text-xs md:text-sm text-amber-700 font-bold">
+              {validationError}
+            </div>
+          )}
           <div className="p-4 rounded-2xl bg-primary/4 border border-primary/10 text-xs text-primary font-semibold flex items-start gap-2">
             <span className="material-symbols-outlined text-[18px]">verified_user</span>
-            <span>出于对公共利益和公信力的重视，请拒绝虚假、夸大或无凭据的投稿。所有上报条目应对应具体的官方信息公告或办事指南。</span>
+            <span>当前提交内容仅保存在本机，暂不会公开发布。正式公开前需要人工核验；请拒绝虚假、夸大或无凭据的投稿。</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -230,21 +235,6 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
                 <option value="medium">中等 (需要攻读外语、投简历或一定抗压能力)</option>
                 <option value="high">高难度 (需要极强的毅力或较坚实的专业背景技能)</option>
               </select>
-            </div>
-
-            {/* Recommendation Rating value */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-700 block">🌟 推荐评估分度 (1.0 - 5.0)</label>
-              <input
-                type="number"
-                min="1"
-                max="5"
-                step="0.1"
-                value={rating}
-                onChange={(e) => setRating(parseFloat(e.target.value) || 4.5)}
-                required
-                className="w-full text-xs font-bold px-4 py-2.5 border border-gray-200 bg-white rounded-xl focus:outline-hidden focus:border-primary/50 text-gray-800"
-              />
             </div>
 
             {/* Focus Tagline highlights */}
@@ -327,12 +317,12 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
 
             {/* Case scen */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-gray-700 block">💬 素人还原场景案例（可模拟）</label>
+              <label className="text-xs font-bold text-gray-700 block">💬 路径示例（非真实人物经历）</label>
               <input
                 type="text"
                 value={scenarios}
                 onChange={(e) => setScenarios(e.target.value)}
-                placeholder="如：小张（名号），毕业于三专，德语拼了半年后申请，目前已被录用..."
+                placeholder="如：先查官方页面，再核对地区、成本、材料和时间窗口，最后决定是否继续了解。"
                 required
                 className="w-full text-xs font-semibold px-4 py-3 border border-gray-200 rounded-xl focus:outline-hidden focus:border-primary/50 text-gray-800"
               />
@@ -421,7 +411,7 @@ export const ContributeView: React.FC<ContributeViewProps> = ({ onAddGap, onNavi
               type="submit"
               className="px-8 py-4 rounded-xl bg-primary hover:bg-primary-container text-white font-extrabold text-sm shadow-md shadow-primary/10 transition-all cursor-pointer select-none"
             >
-              提交共享 · 正式发布到真实图谱中
+              保存到本机
             </button>
           </div>
         </form>

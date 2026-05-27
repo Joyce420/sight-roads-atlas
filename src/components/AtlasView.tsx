@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { InformationGap, CATEGORIES, REGIONS } from "../data";
+import { InformationGap, CATEGORIES, REGIONS, getSourceStatusLabel, isDemoGap } from "../data";
 
 interface AtlasViewProps {
   gaps: InformationGap[];
@@ -22,7 +22,7 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedRegion, setSelectedRegion] = useState("全部地区");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
-  const [sortBy, setSortBy] = useState<"rating" | "views" | "date">("rating");
+  const [sortBy, setSortBy] = useState<"date" | "title">("date");
 
   // Sync initial state if router state changes
   useEffect(() => {
@@ -58,9 +58,8 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
         return matchesSearch && matchesCategory && matchesRegion && matchesDifficulty;
       })
       .sort((a, b) => {
-        if (sortBy === "rating") return b.rating - a.rating;
-        if (sortBy === "views") return b.views - a.views;
         if (sortBy === "date") return new Date(b.date).getTime() - new Date(a.date).getTime();
+        if (sortBy === "title") return a.title.localeCompare(b.title, "zh-Hans-CN");
         return 0;
       });
   }, [gaps, searchQuery, selectedCategory, selectedRegion, selectedDifficulty, sortBy]);
@@ -70,7 +69,7 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
     setSelectedCategory("all");
     setSelectedRegion("全部地区");
     setSelectedDifficulty("all");
-    setSortBy("rating");
+    setSortBy("date");
   };
 
   return (
@@ -82,7 +81,10 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
           <span>世界信息差图谱</span>
         </h1>
         <p className="text-sm text-text-muted">
-          汇集青年权益福利、公共数字资源、城市落脚保障、实用AI工具、免费职业体验及极简生活方式的信息差图谱。
+          汇集机会、权益、资源、工具、项目、政策与生活方式线索，帮助你进一步理解和核验。
+        </p>
+        <p className="text-xs text-primary font-bold">
+          当前为 V0.1 演示数据，内容仍在持续核验和扩展。
         </p>
       </div>
 
@@ -95,7 +97,7 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="在图谱中全局精算搜索：如 '0%' '自办' '德国' '首付' ..."
+            placeholder="搜索信息卡片：如 公共资源、AI工具、城市机会..."
             className="w-full pl-11 pr-4 py-3 bg-gray-50 hover:bg-gray-50/50 focus:bg-white text-sm text-gray-900 border border-gray-150 rounded-xl focus:outline-hidden focus:border-primary/50 transition-all font-medium"
           />
           {searchQuery && (
@@ -164,17 +166,15 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
             </select>
           </div>
 
-          {/* Sort selector */}
           <div className="space-y-1.5">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block">🔃 权重排序规则</span>
+            <span className="text-xs font-bold text-gray-400 uppercase tracking-widest block">🔃 排序方式</span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => setSortBy(e.target.value as "date" | "title")}
               className="w-full text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-hidden focus:border-primary/40 focus:bg-white"
             >
-              <option value="rating">按推荐指数优先</option>
-              <option value="views">按热点浏览量优先</option>
-              <option value="date">按最新发布时间优先</option>
+              <option value="date">按更新时间</option>
+              <option value="title">按标题名称</option>
             </select>
           </div>
 
@@ -194,7 +194,7 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
       {/* Grid count stats */}
       <div className="flex items-center justify-between px-2">
         <span className="text-xs text-text-muted font-bold font-mono">
-          已为您精算寻回 {filteredAndSortedGaps.length} 条契合信息差
+          当前展示 {filteredAndSortedGaps.length} 条信息卡片，共收录 {gaps.length} 条 V0.1 数据
         </span>
       </div>
 
@@ -211,9 +211,21 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
               >
                 {/* Badge Header */}
                 <div className="p-6 pb-0 flex items-start justify-between">
-                  <span className="px-2.5 py-1 rounded-lg bg-primary/5 text-primary text-xs font-bold">
-                    {gap.categoryLabel}
-                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="px-2.5 py-1 rounded-lg bg-primary/5 text-primary text-xs font-bold">
+                      {gap.categoryLabel}
+                    </span>
+                    <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
+                      getSourceStatusLabel(gap) === "有来源" ? "bg-green-50 text-green-600" : "bg-amber-50 text-amber-600"
+                    }`}>
+                      {getSourceStatusLabel(gap)}
+                    </span>
+                    {isDemoGap(gap) && (
+                      <span className="px-2.5 py-1 rounded-lg bg-gray-100 text-gray-500 text-xs font-bold">
+                        演示数据
+                      </span>
+                    )}
+                  </div>
                   
                   <button
                     onClick={(e) => onToggleSave(gap.id, e)}
@@ -256,16 +268,9 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
                   </p>
                 </div>
 
-                {/* Footer bar */}
-                <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100/60 flex items-center justify-between text-[11px]">
-                  <div className="flex items-center gap-1 bg-amber-500/8 text-amber-600 border border-amber-500/15 px-2 py-0.5 rounded-md font-bold">
-                    <span className="material-symbols-outlined text-[14px]">star</span>
-                    <span>{gap.rating.toFixed(1)} 推荐分</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-text-muted font-mono">
-                    <span>⚓️ {gap.stars + (isSaved ? 1 : 0)} 关注</span>
-                    <span>👁️ {gap.views} 阅</span>
-                  </div>
+                <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100/60 flex items-center justify-between text-[11px] text-text-muted font-bold">
+                  <span>{gap.region}</span>
+                  <span>更新时间：{gap.date}</span>
                 </div>
               </div>
             );
@@ -279,7 +284,7 @@ export const AtlasView: React.FC<AtlasViewProps> = ({
           </div>
           <h3 className="text-lg font-bold text-gray-900">未检索到对应的信息差项目</h3>
           <p className="text-sm text-text-muted">
-            没有找到与过滤条件相匹配的世界信息差路线。别灰心，可以尝试缩减部分过滤，或是清理当前的搜索关键字哦。
+            没有找到与过滤条件相符的信息卡片。可以减少筛选条件，或清理当前搜索关键字。
           </p>
           <button
             onClick={handleResetFilters}
