@@ -6,7 +6,7 @@ export interface InformationGap {
   region: string;
   difficulty: "low" | "medium" | "high";
   difficultyLabel: string;
-  rating: number; // 推荐分 1-5
+  rating: number; // V0.1 演示字段，不在页面展示
   tagline: string;
   description: string;
   coreGap: string; // 信息差核心
@@ -14,7 +14,7 @@ export interface InformationGap {
   costEstimation: string; // 费用预估
   timeline: string; // 申办周期
   practicalSteps: string[]; // 实操步骤
-  relatedLinks: { title: string; url: string }[];
+  relatedLinks: { title: string; sourceUrl?: string; url?: string }[];
   scenarios: string; // 真实案例模拟
   risksAndWarmings: string; // 风险提示或自行核验要点
   author: string;
@@ -22,6 +22,14 @@ export interface InformationGap {
   views: number;
   stars: number;
 }
+
+export const hasOfficialSource = (gap: InformationGap) =>
+  gap.relatedLinks.some((link) => /^https?:\/\//i.test(link.sourceUrl || link.url || ""));
+
+export const getSourceStatusLabel = (gap: InformationGap) =>
+  hasOfficialSource(gap) ? "有来源" : "待补充来源";
+
+export const isDemoGap = (gap: InformationGap) => !gap.id.startsWith("custom_");
 
 export const CATEGORIES = [
   { id: "all", label: "全部领域", icon: "grid_view" },
@@ -67,8 +75,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "直接刷卡结算拿药：特药房前台刷码，医保统筹直接自动完成对应比例扣除划扣，患者仅需刷卡或支付个人自理比例部分，即可合规取药。"
     ],
     relatedLinks: [
-      { title: "国家医疗保障局服务门户", url: "https://fuwu.nhsa.gov.cn" },
-      { title: "中华人民共和国中央人民政府公共普惠网", url: "https://www.gov.cn" }
+      { title: "国家医疗保障局服务门户", sourceUrl: "https://fuwu.nhsa.gov.cn" },
+      { title: "中华人民共和国中央人民政府公共普惠网", sourceUrl: "https://www.gov.cn" }
     ],
     scenarios: "刘阿姨（化名），54岁，确诊特定大病。之前配取高价谈判药物，每期开支负担沉重，且不时遇到医院库存紧张的情况。后来，在主理专科医生的指导下，她在省级医保平台上通过并核实了“双通道”认定卡。现在，她拿着电子流转处方前往小区附近的某连锁定点特药药店。经工作人员终端扫码确认，直接免去了绝大部分额度，自己仅需支付合理的自付自负部分，避免了频繁异地跑腿排队的烦恼，极大地减轻了家庭日常养护开销。",
     risksAndWarmings: "1. 处方一般仅有 2 到 3 日的时效期限，限制在政策时效内使用。2. 各省及各地市双通道特药病种与纳入药企名册均由当地医保局每年定期调整，前往拿药前，建议拨打本地 12333 官方热线核验该批号的特药是否仍在当季统筹谈判药册名单里。",
@@ -100,8 +108,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "按额度合规检索并浏览：点击目标入口无感跳转。此时学术平台页面右上端通常将默认标识‘欢迎某某图书馆读者用户共同访问’，读者可依限额免费检索、查阅、合规下载所需的中外 PDF 论文文献。"
     ],
     relatedLinks: [
-      { title: "浙江图书馆官网数字门户", url: "https://www.zjlib.cn" },
-      { title: "中国国家图书馆云网读者之家", url: "http://www.nlc.cn" }
+      { title: "浙江图书馆官网数字门户", sourceUrl: "https://www.zjlib.cn" },
+      { title: "中国国家图书馆云网读者之家", sourceUrl: "http://www.nlc.cn" }
     ],
     scenarios: "非公单位装潢设计师小林准备为一项生态乡村建设草案撰写一份基于新型防潮竹纤维的技术应用报告。由于早已从学校毕业，她苦于没有权限查询核心的研究综述。得知此官方渠道后，她在手机上花了3分钟在线完成了知名省级图书馆免押电子卡申请，并使用其电脑端口进入知网等专属库，顺利浏览并合规查阅到了全部最新核心实验材料，完成了详实优秀的方案汇报，为创业初期省下了不少的开销。",
     risksAndWarmings: "1. 请严格保护版权并切记不要使用特殊外挂程序高频、大批量下载，避免触发平台的反爬防火墙，导致公共账号被锁定。2. 必须遵循公共学术资源合规使用条例，不得二次商业转手牟利。",
@@ -133,8 +141,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "按期核验携带行李入住：在约定的报到日携带随身行李抵达对应公寓前台，出示通过通知及核实身份材料，即可办理合规过渡入驻。"
     ],
     relatedLinks: [
-      { title: "深圳青年驿站官方网上申报系统", url: "https://yidong.youth.sz.gov.cn/szqy" },
-      { title: "成都团市委青年驿站管理大厅", url: "https://www.scgqt.org.cn" }
+      { title: "深圳青年驿站官方网上申报系统", sourceUrl: "https://yidong.youth.sz.gov.cn/szqy" },
+      { title: "成都团市委青年驿站管理大厅", sourceUrl: "https://www.scgqt.org.cn" }
     ],
     scenarios: "专科应届毕业生小谢（化名），手头非常局促，但惊喜地收到了某智能科技公司在异地新基地的第二轮线下复试通知。欣喜之余却又在为几天近千元的异地差旅和青旅房费头疼。在看到了本图谱的官方人才一站式信息提示后，他在深圳青年驿站线上系统提交了相关材料。仅用一天，他就顺利获批入住了地铁站附近的某青年之家，获得一间配有简易冷暖独立卫生间的四人合宿间。在为期 9 天的过渡住宿中，他得到了充分的状态调整，在第 7 天成功签署了就业协议，顺利开启了他的职业长跑。",
     risksAndWarmings: "1. 核心城市区域受春秋求职旺季波动较大，名额有限，请切记至少提前 5-7 天尽早发起占空申请。2. 必须爱护驿站公共物品，自觉遵循宿舍公共内务规范，不得喧哗打扰他人。",
@@ -166,8 +174,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "开启对照提效使用：至此，当您在日常阅读冗长英语学术期刊或整理长篇文章资料时，系统即可直接安全连接官方原厂平台进行秒级数据分析，稳定、没有多余开销。"
     ],
     relatedLinks: [
-      { title: "Google AI Studio 官方开发者平台", url: "https://aistudio.google.com" },
-      { title: "跨模型开源客户端 Cherry Studio 页面", url: "https://github.com/hustcer/cherry-studio" }
+      { title: "Google AI Studio 官方开发者平台", sourceUrl: "https://aistudio.google.com" },
+      { title: "跨模型开源客户端 Cherry Studio 页面", sourceUrl: "https://github.com/hustcer/cherry-studio" }
     ],
     scenarios: "外语系大四毕业生小静需要快速对照翻译、梳理并阅读外文地方生态文献。在知悉了官方提供的合规开发者额度后，自己动手在官方控制台极速申请了一个个人测试用 API 密钥，并内嵌至本地浏览器里的开源对照插件里。她在日常使用中，顺利地以原厂、免费且极其安全的方式参考了一大批权威的生态研究期刊，高质量完成了论文翻译整理。",
     risksAndWarmings: "1. 必须妥善保管好个人唯一的密钥字符串，不可在公开网页（如代码托管仓库）泄露，避免被他人盗用造成额度枯竭。2. 免费额度通常有严格的 RPM/TPM 限额（即每分钟、每天请求频次），该资源仅供个人日常非商业性的合理限额学习及测试研发，需自行核验官方最新政策。",
@@ -199,8 +207,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "开展简单可信的实地走访：前往社区做一份 50 人的简单问卷调研。用这些走访数据证明你不是闭门造车，大大增强企划书的说服力。"
     ],
     relatedLinks: [
-      { title: "大中专院校权威赛事聚合门户 我爱竞赛网", url: "http://www.51jingsai.com" },
-      { title: "社会公益与人文创新创意信息专区 社创号", url: "https://www.socialenterprise.org" }
+      { title: "大中专院校权威赛事聚合门户 我爱竞赛网", sourceUrl: "http://www.51jingsai.com" },
+      { title: "社会公益与人文创新创意信息专区 社创号", sourceUrl: "https://www.socialenterprise.org" }
     ],
     scenarios: "小董（化名）是某文科学院中文专业的在校学生。保研经历较为单一，且不具备深厚的软件开发根基。偶遇某大型公益环保基金会发起的“城市绿色生活巧思大赛”。她便和两个非计算机专业同学协作，在学校食堂做了两天实地垃圾分类走访，并在 Figma 里绘制了 4 张绿色行为打卡的概念效果图。由于现场汇报PPT图文生动，用户痛点抓得极为透彻，最终斩获了优秀等级奖项，丰富了个人实践履历。",
     risksAndWarmings: "1. 必须认真核验大赛承办机构资质，首选部委、省级官方机构、公办高校以及信誉较高大型合规基金会举办的免费官方竞赛，切记警惕任何要求必须交纳参赛金、印书工本费的不合规商业比赛。2. 方案应保持科学理智、测算好造价大账，避免虚无、夸大的空中楼阁计划。",
@@ -232,8 +240,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "按正规合规法进行司法产权登记：委托当地日本司法书士代办过户契税。一并向村役所提交社区友好可持续利用方案，依法合理申办房屋节能翻修与环境改善补助金资金核验。"
     ],
     relatedLinks: [
-      { title: "日本国土交通省空置屋政策官方公开主页", url: "https://www.mlit.go.jp" },
-      { title: "LIFULL 地方役所 Akiya Banks 官方信息网", url: "https://www.homes.co.jp/akiyabank" }
+      { title: "日本国土交通省空置屋政策官方公开主页", sourceUrl: "https://www.mlit.go.jp" },
+      { title: "LIFULL 地方役所 Akiya Banks 官方信息网", sourceUrl: "https://www.homes.co.jp/akiyabank" }
     ],
     scenarios: "独立画师小肖（化名）在认真研究了长野县某乡村关于空家改建的移居专案倡导后，通过官方系统直接购买并办理了一栋闲置多年的木质老房屋。产权税收代办费只花了折合约数千元人民币。由于她在修缮方案书中写道‘本人将发挥艺术绘画与美育特长，将该宅部分区域改造为面向当地居民和孩子的传统茶文化友好开放画室’，深得社区肯定。她以此合理申办了房屋改修翻新补贴。她自己动手刷漆，精心打磨木梁，以极其经济的预算完成了老房屋重整，在好风景中安心开展独立创作。",
     risksAndWarmings: "1. 1981 年日本建筑基准法修订之前的超老木结构，其通常存在严重的防灾抗震和防水漏洞，后续面临大额自理修补风险。2. 旅居境外必须理智守序，掌握基本的日常日常沟通能力，友好融入社区，在符合合法涉外法规前提下开展一切实务，需自行核验境外最新购房相关法规约束。",
@@ -265,8 +273,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "复盘自我重构抗风险成长方向：利用换宿期间较低的吃住成本安心复盘过往，和同宿的优秀同辈探讨多样项目，拓展自己的认知版图。"
     ],
     relatedLinks: [
-      { title: "WWOOF 全球有机生态农业对等互惠网络", url: "https://www.wwoof.net" },
-      { title: "中国国际青年旅舍 YHA 联盟官方义工信息", url: "https://www.yhachina.com" }
+      { title: "WWOOF 全球有机生态农业对等互惠网络", sourceUrl: "https://www.wwoof.net" },
+      { title: "中国国际青年旅舍 YHA 联盟官方义工信息", sourceUrl: "https://www.yhachina.com" }
     ],
     scenarios: "毕业生阿明（化名）在求职初期面临困惑。通过本图谱的官方义工名册指引，他联系上了山区某家致力于环保理念的特色精品民宿。阿明每天帮助前台做 simple 的系统管理并维护公众号 4 小时，民宿老板为他安排了干净的小卧室和丰富的绿色家常菜。在这个平静的环境中，阿明遇到了一位来此度假的资深网页工程师，在对方的热心指点下，阿明理顺了网页项目盲点，并通过推荐成功获得了一个远程维护工作的面试机会，巧妙打破了职业瓶颈。",
     risksAndWarmings: "1. 必须认真甄别，警惕少数非法变相、不注重安全、卫生及人身关怀的低迷民宿，务必在正规大平台下建立沟通。2. 绝非逃学游玩或好逸恶劳，必须尊重承诺诚信地做完每日工时，如需离开应提前 3-5 天告知老板，维持基本的社会互信。",
@@ -298,8 +306,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "定期查核资金划账状态：等待区人社局专干材料复核通过，并在公示阶段无异议后，按月或按季度核实财政资金直接拨付账户中。"
     ],
     relatedLinks: [
-      { title: "中华人民共和国人力资源和社会保障部人才专栏", url: "https://www.mohrss.gov.cn" },
-      { title: "教育部中国高等教育学生信息网(学信网)", url: "https://www.chsi.com.cn" }
+      { title: "中华人民共和国人力资源和社会保障部人才专栏", sourceUrl: "https://www.mohrss.gov.cn" },
+      { title: "教育部中国高等教育学生信息网(学信网)", sourceUrl: "https://www.chsi.com.cn" }
     ],
     scenarios: "专科毕业生小林（化名）入职常州一家科技公司，因房租压力每月心力交瘁。后来她在政务服务网上发现并提交了常州龙城青年租房补贴。她没有借助任何外部商业中介，老老实实上传了学信网学籍截图和合同。15个工作日公示完成后，她顺利获取了每月 800 元的人才租房月补贴，大为减轻了异地生存起步时的刚性生活房租负累。",
     risksAndWarmings: "1. 必须签署正式正规的固定期限劳动合同，警惕一切以虚假聘用、伪造劳务关系的套领行径，虚构劳务属于不合规乃至涉嫌违法行为。2. 补贴标准与申请时效存在地区限制，由于多省每年对补贴资金预算有小幅微调，建议自主向目标城市 12345 市政热线核查最新申领时限和材料变动。",
@@ -331,8 +339,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "自动生成合规授权：平台接收到认证数据后，会自动向账户发放正规官方教育专属证书、或是对数码产品账单直接自动抹除 15%-20% 的额度。"
     ],
     relatedLinks: [
-      { title: "中国铁路官方12306网上购票大厅", url: "https://www.12306.cn" },
-      { title: "微软官方 Office 365 教育尊享认证平台", url: "https://www.microsoft.com/zh-cn/education" }
+      { title: "中国铁路官方12306网上购票大厅", sourceUrl: "https://www.12306.cn" },
+      { title: "微软官方 Office 365 教育尊享认证平台", sourceUrl: "https://www.microsoft.com/zh-cn/education" }
     ],
     scenarios: "专科学生小唐（化名）平时酷好自主编写一些小程序提效，但专业软件每年数百元的授权年费让他不得不长期寻找低质盗版。知晓此官方途径后，他用学校官方发放的教育邮箱，在 JetBrains 官方平台输入提交验证。仅一分钟，官方即发来了长期免费的学生全家桶授权激活邮件。这让他深受鼓舞，激发了高质开发新程序的热忱，免受商业代理抽水烦恼。",
     risksAndWarmings: "1. 严禁出售、转借或与非学生群体灰色共享认证过的 edu 邮箱及学信网截图。一经软件官方发现，账号会有封锁风险并影响学信个人在校信用记录。2. 毕业离校后教育邮箱通常会被校方统一回收注销。部分软硬件厂家每年都会重新验证学籍，需遵循厂家最新现行情规核定。",
@@ -364,8 +372,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "在线自主发起提升补贴领取：登录本省政务一网通办 APP，在失业保险专栏提交证书信息与银行卡接收，等待专项资金拨付入卡。"
     ],
     relatedLinks: [
-      { title: "国家技能人员职业资格证书查询官网系统", url: "http://zscx.osta.org.cn" },
-      { title: "人社部国家职业能力建设服务平台", url: "https://www.mohrss.gov.cn/cms/index.html" }
+      { title: "国家技能人员职业资格证书查询官网系统", sourceUrl: "http://zscx.osta.org.cn" },
+      { title: "人社部国家职业能力建设服务平台", sourceUrl: "https://www.mohrss.gov.cn/cms/index.html" }
     ],
     scenarios: "超市收银员张大姐（化名），想趁闲暇丰富技能。她通过地方人社公众号，没有找任何高收费的代办和考证机构，自己买了 40 元专业书本自学，并在国营实操考核点考取了中式面点师三级证书。随后网上提交了失业保险技能补贴，15天后 1500 元现金补贴划入卡里，相当于零成本学会了一门烘培手艺，为今后就业和开特色小馆探索多添了一层社会保险。",
     risksAndWarmings: "1. 必须凭借自主真才实学诚信参加实践现场统测，警惕市场上任何宣称“交高额渠道费直接出免考证”的涉嫌不合规违法行为。2. 参保缴税时限（多省要求 12 个月或 36 个月以上不等的缴费社保历史）及补贴具体名目金额随地区文旅、民生政策变动。考取前必须致电本地 12333 详细对齐确认。",
@@ -397,8 +405,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "约期享有免费的政务就业内推：选择参加本市人社大局举办的“大学生网络创新创业夏令公益推介会”，合规直面大厂人资。"
     ],
     relatedLinks: [
-      { title: "中国公共招聘网（人社部直连招聘总平台）", url: "http://www.jobgwy.mohrss.gov.cn" },
-      { title: "中国人力资源市场网（全国人才与档案库）", url: "http://chrm.mohrss.gov.cn" }
+      { title: "中国公共招聘网（人社部直连招聘总平台）", sourceUrl: "http://www.jobgwy.mohrss.gov.cn" },
+      { title: "中国人力资源市场网（全国人才与档案库）", sourceUrl: "http://chrm.mohrss.gov.cn" }
     ],
     scenarios: "非名牌高校毕业生小方（化名），因求职心切曾误信某小中介，险些交了数千元押金。在看到了我们信息差图谱的科普引导后，他改用人社部的“国家求职大厅”政务客户端，不仅顺利找到了一份由政府严格核验并公示正规足额社保的电子公司开发工位，还由市人才中心免费保管了个人毕业档案，整个过程没有花一元冤枉服务费，找起工作极为踏实安心。",
     risksAndWarmings: "1. 即便是政务核验过招聘信息的企业，在正式参加复试面试时，若对方面试官以“考评、出差买票、购买服装材料”为名目要求任何形式的先付小额款项，请予以警惕并第一时间打 12333 举报该不合规企业。2. 保证自己递交给人才求职系统的所有简历资历如实，切忌学历造假、履历浮夸，保持求实作风。",
@@ -430,8 +438,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "带足自用干净温水免费游览：现场无需在售票窗口排队打架。手持身份证在自主闸机口核准扫码，即可带全家零成本尊享世界一流的物理实验场与古典画苑体验。"
     ],
     relatedLinks: [
-      { title: "中国科学技术馆全国公共总预约中心", url: "https://www.cdstm.cn" },
-      { title: "中国美术馆官方免费实名预检中心", url: "http://www.namoc.org" }
+      { title: "中国科学技术馆全国公共总预约中心", sourceUrl: "https://www.cdstm.cn" },
+      { title: "中国美术馆官方免费实名预检中心", sourceUrl: "http://www.namoc.org" }
     ],
     scenarios: "外来务工家庭小李（化名）想带两孩子去大型市级科技大馆参加科技创新展，但是看到网上二手黄牛兜售门票要收代客抢票手续费上百。在看了信息差图谱科普以后，小李自己在微信上直接找到了科技馆的官方预约小程序，几秒钟就顺畅地免费抢订到了三张周六上午的名额。周末孩子在科技馆里面高高兴兴地亲手操控了简易机器人的齿轮运行，还省下了一笔巨额的黄牛手续费，让家庭公共休闲既智慧安全又极为合理省钱。",
     risksAndWarmings: "1. 知名博览馆的名额较常受周末及长假期剧烈波动影响，多在每日深夜零点左右集中放出，想要周末探游，请务必提前3天做好闹铃早早守候抢订。2. 切口不要将抢领的名额进行任何形式的线下商业转手或者有偿倒卖，这不仅违背了公共服务的公信初心，也极易触犯治安信用惩戒条例。",
@@ -463,8 +471,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "累积长期稳固的客源获取长尾：当用多次高质量提前保量递交建立起了信誉积分，便能拥有源源不断的直派订单协作，建立长期、安全的非货币型劳动价值。"
     ],
     relatedLinks: [
-      { title: "开发者技能外包及众包平台 开源中国众包", url: "https://zb.oschina.net" },
-      { title: "全球独立文案、创意设计及技术外包协作网络 Fiverr", url: "https://www.fiverr.com" }
+      { title: "开发者技能外包及众包平台 开源中国众包", sourceUrl: "https://zb.oschina.net" },
+      { title: "全球独立文案、创意设计及技术外包协作网络 Fiverr", sourceUrl: "https://www.fiverr.com" }
     ],
     scenarios: "外语小语种专业大三学生小郭（化名），因生活费所需课外想找点翻译活。他曾差点被虚假的商业刷单网站忽悠交保证金。通过这一图谱的信息指导，他在正品技能众包平台上认证，自主承接了某小企业外贸说明书英文翻译小订单。他字斟句酌，高质按期交稿。几次良好累积后，小郭获得了平台新手银赏评价，也由官方自动结转核拨了每期酬劳，成功用自己的双手与真学识缓解了求学期生活费的刚需开销，没花一分冤枉培训交会费钱。",
     risksAndWarmings: "1. 近年来部分境外独立众包平台面临严格的税务纳税申报法规则，收益需依各省有关个人薪酬所得税规定合规申报。2. 必须具备自重自尊。严禁用不合规机器人 AI 一键机翻交差应付，一经雇主提起仲裁，不仅拿不到款项还会面临账号信用永久降级甚至注销。3. 本文仅作工具渠道梳理，任何以轻松赚取高薪为噱头的皆是灰色泡沫，建议脚踏实地，依规前行。",
@@ -496,8 +504,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "友好参加旅舍内的免费社区环保科普沙龙：不盲学不良聚会。和全球各界的设计师、地质探勘青年一起自愿参与民宿的绿色公益徒步，增长地学、生态学多元知识边界。"
     ],
     relatedLinks: [
-      { title: "中国国际青年旅舍 YHA 联盟官方服务网", url: "https://www.yhachina.com" },
-      { title: "国家地理与地方文化旅游局惠民信息枢纽", url: "https://www.mct.gov.cn" }
+      { title: "中国国际青年旅舍 YHA 联盟官方服务网", sourceUrl: "https://www.yhachina.com" },
+      { title: "国家地理与地方文化旅游局惠民信息枢纽", sourceUrl: "https://www.mct.gov.cn" }
     ],
     scenarios: "地理系在读生小华（化名）想在假期考察华中红石地貌景观，苦于生活费不多，难以承担动辄数天几千的住宿。后来他在本信息差图谱里知晓了国际青旅 YHA 联盟网，自己花 50 元极速办了学生卡。他背着质朴的包，沿途全部选择入驻正规挂牌、由团支部联合认证的安全青舍，还用公共厨房做饭。这次为期两周的田野自费实习，仅仅只花费了极少的总资金开销，不仅完美写出了优秀的考察论文还安全开阔了高规格地学见识，深受导师盛赞。",
     risksAndWarmings: "1. 青年旅舍的多人间多为男女分区，住宿期间请务必保管好个人电脑和贵重资历物件，切记爱护公物并尊重多民族、多国家的旅舍夜间作息规章。2. 必须具备自保防范。海外某些非挂牌、打着青旅招牌的灰色不合规私人自营店，往往存在极大的治安及火灾隐患，一定要在 YHA 或者是 Booking 正规大站点细微验证口碑评价。",
@@ -529,8 +537,8 @@ export const INITIAL_GAPS: InformationGap[] = [
       "按合规法获得高校特额委派：在人社和留基委备案登记，由学校国际合作专线出具资金拨付凭证、直发外方大学宿舍或发至你名下特约银行卡内，即可合规低成本出国游学研学。"
     ],
     relatedLinks: [
-      { title: "国家留学网 (国家留学基金管理委员会 CSC 直线上报门户)", url: "https://www.csc.edu.cn" },
-      { title: "中国教育国际交流协会 (青年涉学成长交流总网)", url: "https://www.ceaie.edu.cn" }
+      { title: "国家留学网 (国家留学基金管理委员会 CSC 直线上报门户)", sourceUrl: "https://www.csc.edu.cn" },
+      { title: "中国教育国际交流协会 (青年涉学成长交流总网)", sourceUrl: "https://www.ceaie.edu.cn" }
     ],
     scenarios: "专科加高职联合培养的大三学子小罗（化名），出身普通农家。得知省教育厅直管的暑期“国际校际友好交流营”有校内额度并且全包机票吃住后。他拼尽全力死磕了一个 105 的高绩点并拿下了英语四六级，在面对国际处的全英文面试时用诚恳流畅的会话博取了高分。最终，他顺利被委派，并在留基委全额三万专项资金支持下，赴新加坡高校开展了为期两周的学习研讨，回来还顺畅地获得了名院的硕士推荐。自始至终没有花费父母一分钱存款，成就了扎实的求学生涯高度。",
     risksAndWarmings: "1. 寒暑假名额属于优质资源，考核非常严格，严防部分只看金钱不看实力的非正规私人擦边训练班，注意验证校方国际处通知红头公章。2. 获资助出境游学之后，必须依法恪守两国相关政治法制规范、按期回国复学，严禁任何人打着高额资助的借口擅自擅自逾期滞留在境外或不合规转投，否则会列入学术征信黑名单并追回一切专项经费拨付。",
