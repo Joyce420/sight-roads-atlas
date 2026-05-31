@@ -8,6 +8,25 @@ import { DiscoveryView } from "./components/DiscoveryView";
 import { ContributeView } from "./components/ContributeView";
 import { MyMapView } from "./components/MyMapView";
 import { AiAssistant } from "./components/AiAssistant";
+import { fetchPublicCards, isSupabaseConfigured } from "./supabase";
+
+const readJsonArray = <T,>(key: string): T[] => {
+  try {
+    const storedValue = localStorage.getItem(key);
+    return storedValue ? (JSON.parse(storedValue) as T[]) : [];
+  } catch {
+    return [];
+  }
+};
+
+const mergeGaps = (primary: InformationGap[], fallback: InformationGap[]) => {
+  const seen = new Set<string>();
+  return [...primary, ...fallback].filter((gap) => {
+    if (seen.has(gap.id)) return false;
+    seen.add(gap.id);
+    return true;
+  });
+};
 
 export default function App() {
   const [currentView, setCurrentView] = useState<string>("home");
@@ -23,21 +42,35 @@ export default function App() {
   const [atlasCategoryFilter, setAtlasCategoryFilter] = useState<string>("all");
   const [atlasSearchFilter, setAtlasSearchFilter] = useState<string>("");
 
-  // Sync with local storage on startup
+  // Sync with local storage and public database on startup
   useEffect(() => {
-    // 1. Load bookmarked list
-    const storedSaves = localStorage.getItem("saved_pathways_ids");
-    if (storedSaves) {
-      setSavedIds(JSON.parse(storedSaves));
+    let isActive = true;
+    const parsedSaves = readJsonArray<string>("saved_pathways_ids");
+    const parsedCustom = readJsonArray<InformationGap>("contributed_custom_gaps");
+
+    setSavedIds(parsedSaves);
+    setContributionCount(parsedCustom.length);
+    setGaps(mergeGaps(parsedCustom, INITIAL_GAPS));
+
+    if (!isSupabaseConfigured()) {
+      return () => {
+        isActive = false;
+      };
     }
 
-    // 2. Load contributed custom pathways
-    const storedCustomGaps = localStorage.getItem("contributed_custom_gaps");
-    if (storedCustomGaps) {
-      const parsedCustom: InformationGap[] = JSON.parse(storedCustomGaps);
-      setGaps([...parsedCustom, ...INITIAL_GAPS]);
-      setContributionCount(parsedCustom.length);
-    }
+    fetchPublicCards()
+      .then((remoteCards) => {
+        if (!isActive || remoteCards.length === 0) return;
+        setGaps(mergeGaps(parsedCustom, remoteCards));
+      })
+      .catch(() => {
+        if (!isActive) return;
+        setGaps(mergeGaps(parsedCustom, INITIAL_GAPS));
+      });
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const handleNavigate = (path: string) => {

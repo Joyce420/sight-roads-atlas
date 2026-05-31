@@ -1,3 +1,5 @@
+import type { InformationGap } from "./data";
+
 const env = (import.meta as unknown as { env?: Record<string, string | undefined> }).env || {};
 
 const SUPABASE_URL = (env.VITE_SUPABASE_URL || "").replace(/\/$/, "");
@@ -27,6 +29,13 @@ interface SubmissionPayload {
   contact?: string;
 }
 
+interface SupabaseCardRow {
+  id: string;
+  data: InformationGap;
+  status: "published" | "draft" | "archived";
+  updated_at: string;
+}
+
 const supabaseHeaders = {
   apikey: SUPABASE_KEY,
   Authorization: `Bearer ${SUPABASE_KEY}`,
@@ -39,6 +48,11 @@ const toPublicComment = (row: SupabaseCommentRow): PublicComment => ({
   nickname: row.nickname || "匿名用户",
   content: row.content,
   createdAt: row.created_at,
+});
+
+const toPublicCard = (row: SupabaseCardRow): InformationGap => ({
+  ...row.data,
+  id: row.id || row.data.id,
 });
 
 const requestSupabase = async <T>(path: string, init?: RequestInit): Promise<T> => {
@@ -72,6 +86,17 @@ const requestSupabase = async <T>(path: string, init?: RequestInit): Promise<T> 
 };
 
 export const isSupabaseConfigured = () => Boolean(SUPABASE_URL && SUPABASE_KEY);
+
+export const fetchPublicCards = async (): Promise<InformationGap[]> => {
+  const query = new URLSearchParams({
+    select: "id,data,status,updated_at",
+    status: "eq.published",
+    order: "updated_at.desc",
+  });
+
+  const rows = await requestSupabase<SupabaseCardRow[]>(`cards?${query.toString()}`);
+  return rows.map(toPublicCard).filter((card) => Boolean(card.id && card.title));
+};
 
 export const fetchPublicComments = async (cardId: string): Promise<PublicComment[]> => {
   const query = new URLSearchParams({
