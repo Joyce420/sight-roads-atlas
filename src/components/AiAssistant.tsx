@@ -25,6 +25,20 @@ interface AiAssistantProps {
 
 const normalize = (text: string) => text.toLowerCase().trim();
 
+const getSearchTerms = (query: string) => {
+  const words = query
+    .split(/[\s,，。！？?;；:：、/\\|]+/)
+    .map((term) => term.trim())
+    .filter((term) => term.length >= 2);
+
+  const cjkText = query.replace(/[^\u4e00-\u9fa5]/g, "");
+  const cjkBigrams = Array.from({ length: Math.max(cjkText.length - 1, 0) }, (_, index) =>
+    cjkText.slice(index, index + 2)
+  );
+
+  return Array.from(new Set([query, ...words, ...cjkBigrams].filter((term) => term.length >= 2)));
+};
+
 const extractKeywords = (question: string, gaps: InformationGap[]) => {
   const baseWords = normalize(question)
     .split(/[\s,，。！？?;；:：、/\\|]+/)
@@ -63,10 +77,7 @@ export const askAtlasAssistant = (question: string, gaps: InformationGap[]): Ass
         ].join(" ")
       );
 
-      const terms = Array.from(new Set([
-        query,
-        ...query.split(/[\s,，。！？?;；:：、/\\|]+/).filter((term) => term.length >= 2),
-      ]));
+      const terms = getSearchTerms(query);
 
       const score = terms.reduce((total, term) => {
         if (!term) return total;
